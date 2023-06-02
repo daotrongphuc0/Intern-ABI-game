@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Gamedev Canvas Workshop</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      canvas {
+        background: #eee;
+        display: block;
+        margin: 0 auto;
+        margin-top: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="myCanvas" width="480" height="320"></canvas>
+
+    <script>
+      // JavaScript code goes here
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");  // lưu trữ bối cảnh game 2D
+
+        // vị trí đầu tiên
+        let x = canvas.width / 2;
+        let y = canvas.height - 30;
+
+        // bước nhảy
+        let dx = 2;
+        let dy = -2;
+
+        const ballRadius = 10; // bán kính quả bóng
+
+        // bàn đánh bóng
+        const paddleHeight = 10;
+        const paddleWidth = 75;
+        let paddleX = (canvas.width - paddleWidth) / 2; // điểm bắt đầu của bàn đánh
+
+        // key listener
+        let rightPressed = false;
+        let leftPressed = false;
+
+        // lắng nghe sự kiên trong trang HTML và gọi hàm tương ứng
+        document.addEventListener("keydown", keyDownHandler, false);//hàm giữ phím
+        document.addEventListener("keyup", keyUpHandler, false);  // hàm nhả phím
+
+        function keyDownHandler(e) {
+            if (e.key === "Right" || e.key === "ArrowRight") {
+                rightPressed = true;
+            } else if (e.key === "Left" || e.key === "ArrowLeft") {
+                leftPressed = true;
+            }
+        }
+
+        function keyUpHandler(e) {
+            if (e.key === "Right" || e.key === "ArrowRight") {
+                rightPressed = false;
+            } else if (e.key === "Left" || e.key === "ArrowLeft") {
+                leftPressed = false;
+            }
+        }
+
+
+        // vẽ bóng
+        function drawBall() {
+            ctx.beginPath();
+            //ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
+        }
+        
+        // vẽ bàn đánh bóng
+        function drawPaddle() {
+            ctx.beginPath();
+            ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
+            }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);  // xoá khung hình có toạ độ 0.0 kích thước = canvas
+            drawBall();
+            drawPaddle();
+            if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {  // nếu chạm trái hoặc chạm phải thì đổi x
+                dx = -dx;  // đổi hướng trục x
+            }
+            if(y + dy > canvas.height-ballRadius || y + dy < ballRadius) {  // chạm trên /dưới
+                dy = -dy;  // đổi trục y
+            }
+
+            // if (rightPressed) {
+            //     paddleX += 7;  // dịch bàn đánh sang phải
+            // } else if (leftPressed) {
+            //     paddleX -= 7; // dịch bàn đánh sang trái
+            // }
+            // di chuyển bàn đánh bóng
+            if (rightPressed) {
+                paddleX = Math.min(paddleX + 7, canvas.width - paddleWidth); // nếu vượi quá thì chỉ lấy giá trị min
+            } else if (leftPressed) {
+                paddleX = Math.max(paddleX - 7, 0);  // nếu dưới 0 thì lấy 0
+            }
+
+
+
+
+            x += dx;
+            y += dy;
+        }
+
+        setInterval(draw, 10); // gọi hàm draw sau 10 mili s
+    </script>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>HTML5 Game</title>
+    <meta name="description" content="A basic HTML5 game">
+    <meta name="author" content="[Your name]">
+    <style>
+        canvas {
+            margin: 50px;
+            background-color: beige;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="480" height="320" style="border:1px solid lightgrey;"></canvas>
+
+    <script>
+
+        /* xử lí tốc độ này sẽ sử dụng khung hình là tốc độ
+        * điều này là k đúng nên ta sẽ sử dụng thời gian để là  chuẩn tính tốc độ di chuyển khung hình*/
+        let secondsPassed = 0;
+        let oldTimeStamp = 0;
+        let movingSpeed = 50;
+
+
+        let rectX = 0;
+        let rectY = 0;
+        const canvas = document.getElementById("myCanvas");
+        const context = canvas.getContext("2d");
+        function draw() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = '#FF0000';
+            context.fillRect(rectX, rectY, 150, 100);
+        }
+
+        function update(secondsPassed) {
+            /* Khi trò chơi của bạn chạy ở tốc độ 60 khung hình/giây, 
+            tức là khoảng 0,0167 giây cho mỗi khung hình. 
+            Điều này có nghĩa là khi bạn muốn di chuyển một đối tượng với 50 pixel mỗi giây, 
+            bạn phải nhân 50 với số giây đã trôi qua kể từ khung hình cuối cùng.
+             Trò chơi chạy ở tốc độ 60 khung hình/giây sẽ di chuyển đối tượng 0,835 pixel trên mỗi khung hình.*/
+            // rectX += (movingSpeed * secondsPassed);
+            // rectY += (movingSpeed * secondsPassed);
+
+            timePassed += secondsPassed
+
+            rectX = easeInOutQuint(timePassed, 50, 500, 1.5);
+            rectY = easeLinear(timePassed, 50, 250, 1.5);
+        }
+
+        // Example easing functions
+        function easeInOutQuint(t, b, c, d) {
+            if ((t /= d / 2) < 1) return c / 2 * t * t * t * t * t + b;
+            return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
+        }
+
+        function easeLinear(t, b, c, d) {
+            return c * t / d + b;
+        }
+
+        window.requestAnimationFrame(gameLoop);
+        function gameLoop(timeStamp) {
+            secondsPassed = (timeStamp - oldTimeStamp) / 1000; // lấy mili giây trôi qua 
+            secondsPassed = Math.min(secondsPassed, 0.1);  // tránh trường hợp nhảy thời gian dài khiến khung hình bị thay đổi nhiều
+            oldTimeStamp = timeStamp; // update lại old time  stamp bằng giá trị thời gian hiện tại để dùng cho vòng lặp tới
+
+            // Update game objects in the loop
+            update(secondsPassed);
+            draw();
+
+            window.requestAnimationFrame(gameLoop);
+        }
+
+
+    </script>
+</body>
