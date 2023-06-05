@@ -1,5 +1,5 @@
 import { Application, Container, Sprite, Point, Graphics, TextStyle, Texture } from "pixi.js";
-import { Scene } from "./mouse";
+import { Scene } from "./keybroad";
 
 
 export class Game {
@@ -15,6 +15,10 @@ export class Game {
         let sceneAnimation = new Scene(this.app.screen.width, this.app.screen.height);
         this.app.stage.addChild(sceneAnimation);
 
+        window.addEventListener("keydown", this.onKeyDown);
+    }
+    onKeyDown(e) {
+        console.log("Bạn đã nhấn phím:", e.key);
     }
 }
 
