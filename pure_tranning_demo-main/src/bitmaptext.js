@@ -8,9 +8,12 @@ const app = new Application({
     height: 1280
 });
 document.body.appendChild(app.view);
-
-BitmapFont.from("comic 32", {
-    fill: "#ffffff", // White, will be colored later
+/**
+ * Hiển thị chữ dưới dạng hình ảnh nên có nhiều kiểu chữ đặc biệt, hình ảnh hoặc hiệu ứng lạ
+ * yêu cầu tài nguyên cao hơn
+ */
+BitmapFont.from("comic 32", {   // tạo font
+    fill: "#ffffff",
     fontFamily: "Comic Sans MS",
     fontSize: 32
 })
@@ -19,11 +22,11 @@ BitmapFont.from("comic 32", {
 var bitmapTexty = new BitmapText("I love baking, my family, and my friends",
     {
         fontName: "comic 32",
-        fontSize: 32, // Making it too big or too small will look bad
-        tint: 0xFF0000 // Here we make it red.
+        fontSize: 32,
+        tint: 0xFF0000
     });
 
 bitmapTexty.text = "This is cheap";
-bitmapTexty.text = "Change it as much as you want";
+bitmapTexty.text = "Change it as much as you want";  // từ xuất hiện
 
 app.stage.addChild(bitmapTexty);

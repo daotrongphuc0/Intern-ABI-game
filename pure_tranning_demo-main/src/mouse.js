@@ -10,22 +10,32 @@ export class Scene extends Container {
         this.clampy.y = screenHeight / 2;
         this.addChild(this.clampy);
 
-        // events that begin with "pointer" are touch + mouse
+        /*
+        Mouse only      Touch only          Mouse + Touch
+        click               tap                pointertap
+        mousedown       touchstart             pointerdown
+        mouseup         touchend               pointerup
+        mousemove       touchmove              pointermove
+        */
         this.clampy.on("mouseup", this.onClicky, this);
 
-        // This only works with a mouse
-        // this.clampy.on("click", this.onClicky, this);
-
-        // This only work with touch
-        // this.clampy.on("tap", this.onClicky, this);
-
-        // Super important or the object will never receive mouse events!
+        // .interactive và .pointer 
+        //đối tượng có thể tương tác với chuột và sẽ 
+        //phản ứng với các sự kiện chuột như "click", "mousemove" và "mouseover"
+        //.interactive còn cho phép bạn đặt các trình xử lý sự kiện tùy chỉnh cho đối tượng đó.
         this.clampy.interactive = true;
     }
 
-    onClicky(e) {
+    onClicky(event) {
         console.log("You interacted with Clampy!")
-        console.log("The data of your interaction is super interesting", e)
+        console.log("The data of your interaction is super interesting", event)
+
+        // Lấy tọa độ chuột trong khung cửa sổ trình duyệt
+        const mousePosition = app.view.getBoundingClientRect();
+
+        // Lấy vị trí con trỏ chuột trong container PixiJS
+        const mousePosX = event.clientX - mousePosition.left;
+        const mousePosY = event.clientY - mousePosition.top;
 
         // Global position of the interaction
         // e.global

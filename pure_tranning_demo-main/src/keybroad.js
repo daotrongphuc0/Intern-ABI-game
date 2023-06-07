@@ -12,10 +12,7 @@ export class Scene extends Container {
 
         // Lắng nghe sự kiện keydown
         window.addEventListener("keydown", this.onKeyDown.bind(this));
-
-
     }
-
 
     onKeyDown(e) {
         console.log("Bạn đã nhấn phím:", e.key);

@@ -12,6 +12,10 @@ var style = new TextStyle({
     fill: "#754c24",
     fontSize: 42
 });
+
+/**
+ * hiển thị dữ. có thể xuất json style bằng https://pixijs.io/pixi-text-style/
+ */
 const texty = new Text('Hello world！', style); // Text supports unicode!
 texty.text = "This is expensive to change, please do not abuse";
 

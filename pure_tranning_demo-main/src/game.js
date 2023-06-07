@@ -1,5 +1,5 @@
 import { Application, Container, Sprite, Point, Graphics, TextStyle, Texture } from "pixi.js";
-import { Scene } from "./keybroad";
+import { Scene } from "./bitmaptext";
 
 
 export class Game {
@@ -12,14 +12,14 @@ export class Game {
         });
         document.body.appendChild(this.app.view);
 
-        let sceneAnimation = new Scene(this.app.screen.width, this.app.screen.height);
+        // let sceneAnimation = new Scene(this.app.screen.width, this.app.screen.height);
+        // this.app.stage.addChild(sceneAnimation);
+
+        let sceneAnimation = new Scene();
         this.app.stage.addChild(sceneAnimation);
 
-        window.addEventListener("keydown", this.onKeyDown);
     }
-    onKeyDown(e) {
-        console.log("Bạn đã nhấn phím:", e.key);
-    }
+
 }
 
 window.onload = function () {
