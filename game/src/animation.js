@@ -1,7 +1,7 @@
-import { AnimatedSprite, Container, Texture, Ticker } from "pixi.js";
-
+import { AnimatedSprite, Container, Graphics, Texture, Ticker } from "pixi.js";
+import data from "../assets/jsondata/mainFish.json"
 export class Fish extends Container {
-    constructor(x, y, width, height, gameWidth, gameHeight) {
+    constructor(x, y, width, height, gameWidth, gameHeight, fish) {
         super();
 
         this.height = height
@@ -11,14 +11,19 @@ export class Fish extends Container {
 
         this.speed = 5
 
-        var frames = [
-            "../assets/images/eat.png",
-            "../assets/images/fish.png",
-        ];
+        // var frames = [
+        //     "../assets/images/eat.png",
+        //     "../assets/images/fish.png",
+        // ];
+        // this.textures = []
+        // for (var i = 0; i < data.animation.length; i++) {
+        //     this.textures.push(Texture.from(data.animation[i]))
+        // }
 
 
 
-        this.animated = new AnimatedSprite(frames.map((stringy) => Texture.from(stringy)));
+
+        this.animated = new AnimatedSprite(fish);
         this.animated.height = height;
         this.animated.width = width;
         this.animated.x = x
@@ -56,17 +61,18 @@ export class Fish extends Container {
         }
 
         if (this.goUp) {
-            this.animated.y = Math.max(this.animated.y - (this.speed * deltaTime), this.height / 2);
+            this.animated.y = Math.max(this.animated.y - (this.speed * deltaTime), 0);
         }
 
         if (this.goDown) {
-            this.animated.y = Math.min(this.animated.y + (this.speed * deltaTime), this.gameHeight - (this.height / 2));
+            this.animated.y = Math.min(this.animated.y + (this.speed * deltaTime), this.gameHeight);
         }
     }
 
 
 
     onKeyDown(event) {
+        //console.log(this.animated.position)
         switch (event.keyCode) {
             case 37:
                 this.goLeft = true

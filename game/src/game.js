@@ -1,72 +1,49 @@
-import { Application, Sprite, Ticker } from "pixi.js";
+import { Application, Assets, Ticker, Container } from "pixi.js";
 import { Fish } from "./animation";
 import { SmallFish } from "./SmallFish";
 import data from "../assets/jsondata/dataLv1.json"
+import { Bg } from "./bg";
+import { GameRun } from "./gamerun";
+import { GameOver } from "./gameOver";
 //import { Platform } from "./platform";
 
 
 export class Game {
-    static init() {
+    static async init() {
         this.app = new Application({
-            width: data.game.width,
-            height: data.game.height,
+            width: 1280,
+            height: 720,
             backgroundColor: data.game.backgroundColor,
-
         });
+
+
         document.body.appendChild(this.app.view);
-        this.bg = Sprite.from(data.game.backgroundImage);
-        this.bg.anchor.set(0)
-        this.bg.x = 0;
-        this.bg.y = 0;
-        this.bg.height = this.app.screen.height
-        this.bg.width = this.app.screen.width
-        this.app.stage.addChild(this.bg);
 
-        this.fish = new Fish(200, 200, 100, 100, this.app.screen.width, this.app.screen.height)
-        this.app.stage.addChild(this.fish)
+        this.gameRun = 1
 
-        this.listSmallFish = []
-        for (var i = 0; i < data.smallFish.length; i++) {
-            var tmp = new SmallFish(data.smallFish[i].x, data.smallFish[i].y, data.smallFish[i].width, data.smallFish[i].height, this.app.screen.width, this.app.screen.height)
-            this.listSmallFish.push(tmp)
-            this.app.stage.addChild(tmp)
-        }
+        const bg = await Assets.load('../assets/images/bg.png');
+        const fish = await Assets.load('../assets/images/fish.png');
+        const eat = await Assets.load('../assets/images/eat.png');
+        const smallFish = await Assets.load('../assets/images/ca.png');
+        const bigFish = await Assets.load('../assets/images/Shark.png');
+        const gameOver = await Assets.load('../assets/images/gameOver.png');
+        this.dataGame = []
+        this.dataGame.push(bg)
+        this.dataGame.push(fish)
+        this.dataGame.push(eat)
+        this.dataGame.push(smallFish)
+        this.dataGame.push(bigFish)
+        this.dataGame.push(gameOver)
+        this.mainContainer = new GameRun(1280, 720, this.dataGame, this)
+        this.app.stage.addChild(this.mainContainer)
+        // this.app.stage.addChild(new GameOver(this))
+        // this.app.stage.removeChild(this)
 
-        Ticker.shared.add(this.update, this)
     }
 
-    static update() {
-        for (var i = 0; i < this.listSmallFish.length; i++) {
-            if (this.checkCollision(this.fish, this.listSmallFish[i])) {
-                var tmp = this.listSmallFish[i]
-                this.listSmallFish.splice(i, 1)
-                this.app.stage.removeChild(tmp)
-                //tmp.destroy()
-            }
-        }
-
-        console.log("hi")
-    }
-
-    static checkCollision(objA, objB) {
-        var a = objA.getBounds();
-        var b = objB.getBounds();
-
-        var rightmostLeft = a.left < b.left ? b.left : a.left;
-        var leftmostRight = a.right > b.right ? b.right : a.right;
-
-        if (leftmostRight <= rightmostLeft) {
-            return false;
-        }
-
-        var bottommostTop = a.top < b.top ? b.top : a.top;
-        var topmostBottom = a.bottom > b.bottom ? b.bottom : a.bottom;
-
-        return topmostBottom > bottommostTop;
-    }
-
-
-
+    static gameOver(
+        thi
+    )
 
 }
 

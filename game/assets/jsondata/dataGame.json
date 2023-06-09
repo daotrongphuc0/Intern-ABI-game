@@ -1,0 +1,7 @@
+{
+    "game": {
+        "height": 720,
+        "width": 1280,
+        "imageBg": "../assets/image/bg.png"
+    }
+}
