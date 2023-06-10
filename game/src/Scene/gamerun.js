@@ -1,52 +1,50 @@
-import { Container, Assets, Sprite, Ticker } from "pixi.js";
-import { Fish } from "./animation";
-import { SmallFish } from "./SmallFish";
-import { BigFish } from "./BigFish"
-import data from "../assets/jsondata/dataLv1.json"
-import { Bg } from "./bg";
+import { Container, Ticker } from "pixi.js";
+import { Fish } from "../model/mainFish";
+import { SmallFish } from "../model/SmallFish";
+import { BigFish } from "../model/BigFish"
+import data from "../../assets/jsondata/dataLv1.json"
+import { Bg } from "../model/bg";
+import { Game } from "../game";
+import dataGame from "../../assets/jsondata/dataGame.json"
 import { GameOver } from "./gameOver";
 
 
 export class GameRun extends Container {
-    constructor(width, height, data1, app) {
+    constructor() {
         super()
 
-        this.app = app
+
         this.x = 0
         this.y = 0
-        this.width = width
-        this.height = height
+        this.width = dataGame.game.width
+        this.height = dataGame.game.height
         console.log('game run')
         console.log(this.getBounds())
 
         this.leverGameOver = false
 
-        this.bg = new Bg(width, height, data1[0])
+        this.bg = new Bg()
         this.addChild(this.bg);
 
-        this.fish = new Fish(200, 200, 100, 100, width, height, [data1[1], data1[2]])
+        this.fish = new Fish(200, 200, 100, 100)
         this.addChild(this.fish)
 
         this.listSmallFish = []
         for (var i = 0; i < data.smallFish.length; i++) {
-            var tmp = new SmallFish(data.smallFish[i].x, data.smallFish[i].y, data.smallFish[i].width,
-                data.smallFish[i].height, width, height, data1[3])
+            var tmp = new SmallFish(data.smallFish[i].x, data.smallFish[i].y, data.smallFish[i].width, data.smallFish[i].height)
             this.listSmallFish.push(tmp)
             this.addChild(tmp)
         }
 
         this.listBigFish = []
         for (var i = 0; i < data.bigFish.length; i++) {
-            var tmp = new BigFish(data.bigFish[i].x, data.bigFish[i].y, data.bigFish[i].width,
-                data.bigFish[i].height, width, height, data1[4])
+            var tmp = new BigFish(data.bigFish[i].x, data.bigFish[i].y, data.bigFish[i].width, data.bigFish[i].height)
             this.listBigFish.push(tmp)
             this.addChild(tmp)
         }
-        //console.log(this.getBounds())
+
         Ticker.shared.add(this.update, this)
 
-        // Ticker.shared.maxFPS = 60
-        // Ticker.shared.minFPS = 60
     }
 
     update(deltaTime) {
@@ -67,14 +65,15 @@ export class GameRun extends Container {
         for (var i = 0; i < this.listBigFish.length; i++) {
             this.listBigFish[i].checkLocation(this.fish)
             if (this.checkCollision(this.fish, this.listBigFish[i])) {
-                this.app.app.stage.mainContainer.addChild(new GameOver(this.app))
-                this.app.app.stage.mainContainer.removeChild(this)
+                // this.app.app.stage.mainContainer.addChild(new GameOver(this.app))
+                // this.app.app.stage.mainContainer.removeChild(this)
+                Game.chanceScene(new GameOver())
                 this.destroy()
             }
 
         }
 
-        console.log(1000 / Ticker.shared.deltaMS)
+
     }
 
     checkCollision(objA, objB) {

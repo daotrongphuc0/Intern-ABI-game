@@ -1,14 +1,14 @@
-import { AnimatedSprite, Container, Graphics, Texture, Ticker } from "pixi.js";
-import data from "../assets/jsondata/mainFish.json"
+import { AnimatedSprite, Assets, Container, Graphics, Texture, Ticker } from "pixi.js";
+import data from "../../assets/jsondata/dataGame.json"
+import { manifest } from "../gameload/assets";
 export class Fish extends Container {
-    constructor(x, y, width, height, gameWidth, gameHeight, fish) {
+    constructor(x, y, width, height) {
         super();
 
         this.height = height
         this.width = width
-        this.gameWidth = gameWidth
-        this.gameHeight = gameHeight
-
+        this.gameWidth = data.game.width
+        this.gameHeight = data.game.height
         this.speed = 5
 
         // var frames = [
@@ -20,10 +20,10 @@ export class Fish extends Container {
         //     this.textures.push(Texture.from(data.animation[i]))
         // }
 
+        const mainFishBundle = manifest.bundles.find(bundle => bundle.name === 'mainFish'); // Tìm bundle 'mainFish'
+        const mainFishTextures = mainFishBundle.assets.map(asset => Texture.from(asset.srcs)); // Tạo mảng textures từ danh sách assets
+        this.animated = new AnimatedSprite(mainFishTextures);
 
-
-
-        this.animated = new AnimatedSprite(fish);
         this.animated.height = height;
         this.animated.width = width;
         this.animated.x = x

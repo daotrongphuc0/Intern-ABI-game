@@ -1,25 +1,28 @@
-import { AnimatedSprite, Container, Sprite, Texture, Ticker } from "pixi.js";
+import { Container, Sprite, Texture, Ticker } from "pixi.js";
+import { manifest } from "../gameload/assets";
+import dataGame from "../../assets/jsondata/dataGame.json"
 
-export class SmallFish extends Container {
-    constructor(x, y, width, height, gameWidth, gameHeight, smallFish) {
+export class BigFish extends Container {
+    constructor(x, y, width, height) {
         super();
 
         this.height = height
         this.width = width
-        this.gameWidth = gameWidth
-        this.gameHeight = gameHeight
+        this.gameWidth = dataGame.game.width
+        this.gameHeight = dataGame.game.height
 
         this.speed = 1
 
         this.timeLoop = 3000
         this.dangerous = 0
         this.timedan = 0
+        const bigFishBundle = manifest.bundles.find(bundle => bundle.name === 'bigFish'); // Tìm bundle 'bigFish'
+        const texture = Texture.from(bigFishBundle.assets['bigFish01']); // Lấy đường dẫn của texture 'bigFish01' từ assets
 
-        // this.fish = Sprite.from("../assets/images/ca.png")
-        this.fish = new Sprite(smallFish)
-        this.fish.scale.x = -1
-        this.fish.height = 80;
-        this.fish.width = 80;
+        this.fish = new Sprite(texture);
+        this.fish.scale.x = 1
+        this.fish.height = 130;
+        this.fish.width = 130;
         this.fish.x = x
         this.fish.y = y
         this.fish.anchor.set(0.5)
@@ -41,17 +44,17 @@ export class SmallFish extends Container {
     update(deltaTime) {
 
         if (this.goLeft) {
-            this.fish.scale.x = 1
-            this.fish.height = 80;
-            this.fish.width = 80;
+            this.fish.scale.x = -1
+            this.fish.height = 130;
+            this.fish.width = 130;
             this.fish.x = this.fish.x - (this.speed * deltaTime);
             if (this.fish.x + this.width / 2 < 0) this.fish.x = this.gameWidth + this.width / 2
         }
 
         if (this.goRight) {
-            this.fish.scale.x = -1
-            this.fish.height = 80;
-            this.fish.width = 80;
+            this.fish.scale.x = 1
+            this.fish.height = 130;
+            this.fish.width = 130;
             this.fish.x = this.fish.x + (this.speed * deltaTime);
             if (this.fish.x - this.width / 2 > this.gameWidth) this.fish.x = 0 - this.width / 2
         }
@@ -133,19 +136,19 @@ export class SmallFish extends Container {
             this.timedan = 5000
             this.speed = 3
             if (obj.animated.x > this.fish.x) {
-                this.goLeft = true
-                this.goRight = false
-            } else {
                 this.goLeft = false
                 this.goRight = true
+            } else {
+                this.goLeft = true
+                this.goRight = false
             }
 
             if (obj.animated.y > this.fish.y) {
-                this.goUp = true
-                this.goDown = false
-            } else {
                 this.goUp = false
                 this.goDown = true
+            } else {
+                this.goUp = true
+                this.goDown = false
             }
 
         }

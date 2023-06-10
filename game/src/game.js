@@ -1,18 +1,17 @@
 import { Application, Assets, Ticker, Container } from "pixi.js";
-import { Fish } from "./animation";
-import { SmallFish } from "./SmallFish";
+import { LoadGame } from "./gameload/loadgame";
 import data from "../assets/jsondata/dataLv1.json"
-import { Bg } from "./bg";
-import { GameRun } from "./gamerun";
-import { GameOver } from "./gameOver";
+import dataGame from "../assets/jsondata/dataGame.json";
+import { GameRun } from "./Scene/gamerun";
+import { GameOver } from "./Scene/gameOver";
 //import { Platform } from "./platform";
 
 
 export class Game {
     static async init() {
         this.app = new Application({
-            width: 1280,
-            height: 720,
+            width: dataGame.game.width,
+            height: dataGame.game.height,
             backgroundColor: data.game.backgroundColor,
         });
 
@@ -21,29 +20,28 @@ export class Game {
 
         this.gameRun = 1
 
-        const bg = await Assets.load('../assets/images/bg.png');
-        const fish = await Assets.load('../assets/images/fish.png');
-        const eat = await Assets.load('../assets/images/eat.png');
-        const smallFish = await Assets.load('../assets/images/ca.png');
-        const bigFish = await Assets.load('../assets/images/Shark.png');
-        const gameOver = await Assets.load('../assets/images/gameOver.png');
-        this.dataGame = []
-        this.dataGame.push(bg)
-        this.dataGame.push(fish)
-        this.dataGame.push(eat)
-        this.dataGame.push(smallFish)
-        this.dataGame.push(bigFish)
-        this.dataGame.push(gameOver)
-        this.mainContainer = new GameRun(1280, 720, this.dataGame, this)
-        this.app.stage.addChild(this.mainContainer)
-        // this.app.stage.addChild(new GameOver(this))
-        // this.app.stage.removeChild(this)
+
+
+        this.mainContainer = new Container()
+        this.mainContainer.x = 0
+        this.mainContainer.y = 0
+
+        this.loadGame = new LoadGame()
 
     }
 
-    static gameOver(
-        thi
-    )
+    static chanceScene(scene) {
+        try {
+            this.mainContainer.removeChild(this.mainContainer.children[0])
+        }
+        catch (e) { }
+        this.mainContainer.addChild(scene)
+    }
+
+    static finishLoad() {
+        this.mainContainer.addChild(new GameRun())
+        this.app.stage.addChild(this.mainContainer)
+    }
 
 }
 
