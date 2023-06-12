@@ -8,11 +8,11 @@ import { GameOver } from "./Scene/gameOver";
 
 
 export class Game {
-    static async init() {
+    static init() {
         this.app = new Application({
             width: dataGame.game.width,
             height: dataGame.game.height,
-            backgroundColor: data.game.backgroundColor,
+            backgroundColor: dataGame.game.backgroundColor,
         });
 
 
@@ -32,7 +32,8 @@ export class Game {
 
     static chanceScene(scene) {
         try {
-            this.mainContainer.removeChild(this.mainContainer.children[0])
+            this.mainContainer.children[0].destroy()
+            //this.mainContainer.removeChild(this.mainContainer.children[0])
         }
         catch (e) { }
         this.mainContainer.addChild(scene)

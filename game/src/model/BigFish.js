@@ -1,31 +1,44 @@
-import { Container, Sprite, Texture, Ticker } from "pixi.js";
+import { Container, Sprite, Texture, Ticker, Graphics } from "pixi.js";
 import { manifest } from "../gameload/assets";
 import dataGame from "../../assets/jsondata/dataGame.json"
 
 export class BigFish extends Container {
-    constructor(x, y, width, height) {
+    constructor(x, y, x_bg, y_bg, bg_width, bg_height) {
         super();
-
-        this.height = height
-        this.width = width
-        this.gameWidth = dataGame.game.width
-        this.gameHeight = dataGame.game.height
+        this.x = x
+        this.y = y
+        this.x_bg = x_bg
+        this.y_bg = y_bg
+        this.bg_width = bg_width
+        this.bg_height = bg_height
 
         this.speed = 1
 
         this.timeLoop = 3000
-        this.dangerous = 0
-        this.timedan = 0
+        this.angry = 0
+        this.time_angry = 0
+
         const bigFishBundle = manifest.bundles.find(bundle => bundle.name === 'bigFish'); // Tìm bundle 'bigFish'
         const texture = Texture.from(bigFishBundle.assets['bigFish01']); // Lấy đường dẫn của texture 'bigFish01' từ assets
-
         this.fish = new Sprite(texture);
-        this.fish.scale.x = 1
-        this.fish.height = 130;
-        this.fish.width = 130;
-        this.fish.x = x
-        this.fish.y = y
         this.fish.anchor.set(0.5)
+        this.fish.scale.set(1)
+        this.fish.x = this.fish.width / 2
+        this.fish.y = this.fish.height / 2
+        this.addChild(this.fish)
+
+
+        this.container = new Graphics()
+        this.container.x = 0
+        this.container.y = 0
+        this.container.beginFill('0xFFFFFF')
+        this.container.drawRect(-this.fish.width / 2 * 0.6, -this.fish.height / 2 * 0.3,
+            this.fish.width * 0.75, this.fish.height * 0.4)
+        this.container.endFill()
+        this.container.alpha = 0.5
+        this.fish.addChild(this.container)
+
+
 
         this.goLeft = true;
         this.goRight = false;
@@ -33,9 +46,11 @@ export class BigFish extends Container {
         this.goUp = false;
         this.currentTime = 0;
 
+
+
+
         this.randomDirection()
 
-        this.addChild(this.fish)
         Ticker.shared.add(this.update, this);
 
 
@@ -45,35 +60,31 @@ export class BigFish extends Container {
 
         if (this.goLeft) {
             this.fish.scale.x = -1
-            this.fish.height = 130;
-            this.fish.width = 130;
-            this.fish.x = this.fish.x - (this.speed * deltaTime);
-            if (this.fish.x + this.width / 2 < 0) this.fish.x = this.gameWidth + this.width / 2
+            this.x = this.x - (this.speed * deltaTime);
+            if (this.x + this.fish.width < 0) this.x = this.bg_width
         }
 
         if (this.goRight) {
             this.fish.scale.x = 1
-            this.fish.height = 130;
-            this.fish.width = 130;
-            this.fish.x = this.fish.x + (this.speed * deltaTime);
-            if (this.fish.x - this.width / 2 > this.gameWidth) this.fish.x = 0 - this.width / 2
+            this.x = this.x + (this.speed * deltaTime);
+            if (this.x > this.bg_width) this.x = - this.fish.width
         }
 
         if (this.goUp) {
-            this.fish.y = this.fish.y - (this.speed * deltaTime);
-            if (this.fish.y - this.height / 2 < 0 - this.height / 2) this.fish.y = this.gameWidth
+            this.y = this.y - (this.speed * deltaTime);
+            if (this.y < this.y_bg - this.fish.height) this.y = this.bg_height
         }
 
         if (this.goDown) {
-            this.fish.y = this.fish.y + (this.speed * deltaTime);
-            if (this.fish.y - this.height / 2 > this.gameHeight) this.fish.y = 0
+            this.y = this.y + (this.speed * deltaTime);
+            if (this.y > this.bg_height) this.y = 0 - this.fish.height + this.y_bg
         }
 
-        if (this.dangerous) {
-            if (this.timedan < 4000) {
+        if (this.angry) {
+            if (this.time_angry < 4000) {
                 this.speed = 1
-                if (this.timedan < 0) {
-                    this.dangerous = false
+                if (this.time_angry < 0) {
+                    this.angry = false
                 }
             }
 
@@ -86,7 +97,7 @@ export class BigFish extends Container {
             }
         }
 
-        this.timedan -= Ticker.shared.deltaMS
+        this.time_angry -= Ticker.shared.deltaMS
 
 
         //console.log(1000 / Ticker.shared.deltaMS);
@@ -94,6 +105,8 @@ export class BigFish extends Container {
 
     randomDirection() {
         var randomNumberX = Math.floor(Math.random() * 3)
+        var randomNumberY = Math.floor(Math.random() * 3)
+        if (randomNumberY === 0 && randomNumberX == 0) randomNumberX = 1
         switch (randomNumberX) {
             case 0:
                 this.goRight = false
@@ -108,8 +121,7 @@ export class BigFish extends Container {
                 this.goLeft = true
                 break
         }
-        var randomNumberY = Math.floor(Math.random() * 3)
-        if (randomNumberY === 0 && randomNumberX == 0) randomNumberY = 1
+
 
         switch (randomNumberY) {
             case 0:
@@ -129,26 +141,27 @@ export class BigFish extends Container {
     }
 
     checkLocation(obj) {
-        var kc = Math.sqrt(Math.pow(obj.animated.x - this.fish.x, 2) + Math.pow(obj.animated.y - this.fish.y, 2))
+        var kc = Math.sqrt(Math.pow(obj.x - this.x, 2)
+            + Math.pow(obj.y - this.y, 2))
         //console.log(kc)
-        if (kc < 300 && this.timedan < 0) {
-            this.dangerous = true
-            this.timedan = 5000
+        if (kc < 300 && this.time_angry < 0) {
+            this.angry = true
+            this.time_angry = 5000
             this.speed = 3
-            if (obj.animated.x > this.fish.x) {
-                this.goLeft = false
-                this.goRight = true
-            } else {
+            if (obj.x < this.x) {
                 this.goLeft = true
                 this.goRight = false
+            } else {
+                this.goLeft = false
+                this.goRight = true
             }
 
-            if (obj.animated.y > this.fish.y) {
-                this.goUp = false
-                this.goDown = true
-            } else {
+            if (obj.y < this.y) {
                 this.goUp = true
                 this.goDown = false
+            } else {
+                this.goUp = false
+                this.goDown = true
             }
 
         }

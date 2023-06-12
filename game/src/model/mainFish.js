@@ -1,44 +1,47 @@
 import { AnimatedSprite, Assets, Container, Graphics, Texture, Ticker } from "pixi.js";
-import data from "../../assets/jsondata/dataGame.json"
 import { manifest } from "../gameload/assets";
 export class Fish extends Container {
-    constructor(x, y, width, height) {
+    constructor(x, y, x_bg, y_bg, bg_width, bg_height) {
         super();
+        this.x_bg = x_bg
+        this.y_bg = y_bg
+        this.bg_width = bg_width
+        this.bg_height = bg_height
 
-        this.height = height
-        this.width = width
-        this.gameWidth = data.game.width
-        this.gameHeight = data.game.height
+        this.x = x
+        this.y = y
+
         this.speed = 5
-
-        // var frames = [
-        //     "../assets/images/eat.png",
-        //     "../assets/images/fish.png",
-        // ];
-        // this.textures = []
-        // for (var i = 0; i < data.animation.length; i++) {
-        //     this.textures.push(Texture.from(data.animation[i]))
-        // }
-
-        const mainFishBundle = manifest.bundles.find(bundle => bundle.name === 'mainFish'); // Tìm bundle 'mainFish'
-        const mainFishTextures = mainFishBundle.assets.map(asset => Texture.from(asset.srcs)); // Tạo mảng textures từ danh sách assets
-        this.animated = new AnimatedSprite(mainFishTextures);
-
-        this.animated.height = height;
-        this.animated.width = width;
-        this.animated.x = x
-        this.animated.y = y
-        this.animated.anchor.set(0.5)
-
         this.goLeft = false;
         this.goRight = false;
         this.goDown = false;
         this.goUp = false;
 
-        //this.addChild(this.animated);
+
+
+        const mainFishBundle = manifest.bundles.find(bundle => bundle.name === 'mainFish'); // Tìm bundle 'mainFish'
+        const mainFishTextures = mainFishBundle.assets.map(asset => Texture.from(asset.srcs)); // Tạo mảng textures từ danh sách assets
+        this.animated = new AnimatedSprite(mainFishTextures);
+        this.animated.anchor.set(0.5)
+        this.animated.x = this.animated.width / 2
+        this.animated.y = this.animated.height / 2
+        this.addChild(this.animated)
         this.animated.play();
         this.animated.animationSpeed = 0.1;
-        this.addChild(this.animated)
+
+        this.container = new Graphics()
+        this.container.x = 0
+        this.container.y = 0
+        this.container.beginFill('0xFFFFFF')
+        this.container.drawRect(-this.animated.width / 2 * 0.6, -this.animated.height / 2 * 0.6, this.animated.width * 0.8, this.animated.height * 0.6)
+        this.container.endFill()
+        this.container.alpha = 0.5
+        this.animated.addChild(this.container)
+
+
+
+        this.animated.scale.set(0.5)
+
         Ticker.shared.add(this.update, this);
 
         window.addEventListener("keydown", this.onKeyDown.bind(this))
@@ -46,26 +49,25 @@ export class Fish extends Container {
     }
 
     update(deltaTime) {
+        //console.log(this.getBounds())
+        //console.log(this.x)
+
         if (this.goLeft) {
-            this.animated.scale.x = -1
-            this.animated.height = 100;
-            this.animated.width = 100;
-            this.animated.x = Math.max(this.animated.x - (this.speed * deltaTime), this.width / 2);
+            this.animated.scale.x = -0.5
+            this.x = Math.max(this.x - (this.speed * deltaTime), - (this.animated.width / 2));
         }
 
         if (this.goRight) {
-            this.animated.scale.x = 1
-            this.animated.height = 100;
-            this.animated.width = 100;
-            this.animated.x = Math.min(this.animated.x + (this.speed * deltaTime), this.gameWidth - (this.width / 2));
+            this.animated.scale.x = 0.5
+            this.x = Math.min(this.x + (this.speed * deltaTime), this.bg_width - this.animated.width * 1.5);
         }
 
         if (this.goUp) {
-            this.animated.y = Math.max(this.animated.y - (this.speed * deltaTime), 0);
+            this.y = Math.max(this.y - (this.speed * deltaTime), this.y_bg - this.animated.height / 2);
         }
 
         if (this.goDown) {
-            this.animated.y = Math.min(this.animated.y + (this.speed * deltaTime), this.gameHeight);
+            this.y = Math.min(this.y + (this.speed * deltaTime), this.bg_height - this.animated.height / 2 - this.y_bg / 2);
         }
     }
 

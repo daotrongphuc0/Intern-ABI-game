@@ -2,6 +2,7 @@
     "game": {
         "height": 720,
         "width": 1280,
-        "imageBg": "../assets/image/bg.png"
+        "imageBg": "../assets/image/bg.png",
+        "backgroundColor": "0x1099bb"
     }
 }

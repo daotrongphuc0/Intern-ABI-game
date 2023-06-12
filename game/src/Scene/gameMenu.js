@@ -7,6 +7,6 @@ import { Game } from "../game";
 
 export class GameMenu extends Container {
     constructor() {
-
+        
     }
 }

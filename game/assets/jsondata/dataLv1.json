@@ -1,11 +1,12 @@
 {
-    "game": {
+    "game_bg": {
+        "x_bg": 0,
+        "y_bg": 50,
         "width": 1280,
         "height": 720,
-        "backgroundColor": "0x1099bb",
         "backgroundImage": "../assets/images/bg.png"
     },
-    "fish": {
+    "mainFish": {
         "x": 200,
         "y": 200,
         "width": 100,
