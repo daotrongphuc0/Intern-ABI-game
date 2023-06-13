@@ -109,4 +109,23 @@ export class Fish extends Container {
         }
     }
 
+    destroy_this() {
+        super.destroy()
+        // Hủy đăng ký cập nhật
+        Ticker.shared.remove(this.update, this);
+
+        // Xóa đối tượng con
+        this.removeChild(this.animated);
+        this.animated.removeChild(this.container);
+
+
+
+        // Xóa đối tượng container
+        this.container.destroy()
+        this.animated.destroy()
+
+        // Xóa chính class Fish khỏi đối tượng cha
+        this.destroy();
+    }
+
 }

@@ -5,6 +5,7 @@ import dataGame from "../../assets/jsondata/dataGame.json"
 export class SmallFish extends Container {
     constructor(x, y, x_bg, y_bg, bg_width, bg_height) {
         super();
+        this.isActive = true
         this.x = x
         this.y = y
         this.x_bg = x_bg
@@ -162,6 +163,21 @@ export class SmallFish extends Container {
             }
 
         }
+    }
+
+    destroy_this() {
+        // Hủy đăng ký cập nhật
+        Ticker.shared.remove(this.update, this);
+
+        // Xóa đối tượng con
+        this.removeChild(this.fish);
+        this.fish.removeChild(this.container);
+
+        this.container.destroy()
+        this.fish.destroy()
+
+        // Xóa chính class SmallFish khỏi đối tượng cha
+        this.destroy();
     }
 
 }

@@ -31,6 +31,9 @@ export const manifest = {
             {
                 'bgGame': '../assets/images/bg.png',
                 'bgGameOver': '../assets/images/gameOver.png',
+                'bgGameMenu': '../assets/images/bgmenu.png',
+                'bgGameLv2': '../assets/images/bglv2.jpg',
+                'item_bg_menu': '../assets/images/menustart.png',
             }
 
         },

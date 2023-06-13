@@ -4,7 +4,9 @@
         "y_bg": 50,
         "width": 1280,
         "height": 720,
-        "backgroundImage": "../assets/images/bg.png"
+        "backgroundImage": "../assets/images/bg.png",
+        "score_increase": 10,
+        "limit_small_fish": 4
     },
     "mainFish": {
         "x": 200,
@@ -27,6 +29,48 @@
         },
         {
             "x": 800,
+            "y": 600,
+            "width": 100,
+            "height": 100
+        },
+        {
+            "x": 1000,
+            "y": 600,
+            "width": 100,
+            "height": 100
+        },
+        {
+            "x": 200,
+            "y": 600,
+            "width": 100,
+            "height": 100
+        },
+        {
+            "x": 500,
+            "y": 600,
+            "width": 100,
+            "height": 100
+        },
+        {
+            "x": 800,
+            "y": 600,
+            "width": 100,
+            "height": 100
+        },
+        {
+            "x": 1000,
+            "y": 600,
+            "width": 100,
+            "height": 100
+        },
+        {
+            "x": 200,
+            "y": 600,
+            "width": 100,
+            "height": 100
+        },
+        {
+            "x": 500,
             "y": 600,
             "width": 100,
             "height": 100

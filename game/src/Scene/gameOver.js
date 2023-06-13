@@ -8,10 +8,10 @@ import { Game } from "../game";
 
 
 export class GameOver extends Container {
-    constructor(app) {
+    constructor() {
         super()
 
-        this.app = app
+
         this.x = 0
         this.y = 0
 
@@ -41,9 +41,10 @@ export class GameOver extends Container {
         this.yes.y = 0
         this.yes.texture.frame = new Rectangle(0, 300, this.yes.width / 2 - 160, this.yes.height - 300 - 35);
         this.backgroundYes = new Graphics();
-        this.backgroundYes.beginFill(0xFFFFFF);
+        this.backgroundYes.beginFill(0x00FF00);
         this.backgroundYes.drawRect(30, 10, this.yes.width - 10, this.yes.height);
         this.backgroundYes.endFill();
+        this.backgroundYes.alpha = 0
         this.containerYes.addChild(this.backgroundYes)
         this.containerYes.addChild(this.yes)
         this.addChild(this.containerYes)
@@ -61,11 +62,13 @@ export class GameOver extends Container {
         this.no.y = 0
         this.no.texture.frame = new Rectangle(this.no.width / 2, 300, this.no.width / 2 - 160, this.no.height - 300 - 35);
         this.backgroundNo = new Graphics();
-        this.backgroundNo.beginFill(0xFFFFFF);
+        this.backgroundNo.beginFill(0x00FF00);
         this.backgroundNo.drawRect(0, 10, this.no.width - 10, this.no.height);
         this.backgroundNo.endFill();
+        this.backgroundNo.alpha = 0
         this.containerNo.addChild(this.backgroundNo)
         this.containerNo.addChild(this.no)
+
         this.addChild(this.containerNo)
         this.containerNo.interactive = true;
         this.containerNo.on('pointerover', this.onPointerOver.bind(this.backgroundNo));
@@ -74,12 +77,14 @@ export class GameOver extends Container {
     }
 
 
-    onPointerOver(background) {
-        this.tint = 0x00FF00;
+    onPointerOver() {
+        //this.tint = 0x00FF00;
+        this.alpha = 1
     }
 
     onPointerOut() {
-        this.tint = 0xFFFFFF;
+        // this.tint = 0xFFFFFF;
+        this.alpha = 0
     }
 
     onClickYes() {
@@ -89,6 +94,19 @@ export class GameOver extends Container {
 
     onclickNo() {
 
+    }
+
+    destroy_this() {
+        this.containerYes.interactive = false
+        this.containerNo.interactive = false
+        this.bg.destroy()
+        this.menu.destroy()
+        this.containerYes.destroy()
+        this.yes.destroy()
+        this.backgroundYes.destroy()
+        this.no.destroy()
+        this.backgroundNo.destroy()
+        this.containerNo.destroy()
     }
 
 
