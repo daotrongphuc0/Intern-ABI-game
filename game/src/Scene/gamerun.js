@@ -19,12 +19,14 @@ export class GameRun extends Container {
         this.time = 0
         this.width = dataGame.game.width
         this.height = dataGame.game.height
+        this.sortableChildren = true
 
         this.quantity_fish = data.game_bg.limit_small_fish
         console.log('game run')
         console.log(this.getBounds())
 
         this.bg = new Bg(0, 50)
+        this.bg.zIndex = 0
         this.addChild(this.bg);
 
         this.fish = new Fish(data.mainFish.x, data.mainFish.y, data.game_bg.x_bg, data.game_bg.y_bg,
@@ -82,6 +84,7 @@ export class GameRun extends Container {
         this.text_time = new Text('00:00', style);
         this.text_time.x = 1020
         this.header.addChild(this.text_time)
+        this.header.zIndex = 100
 
         this.addChild(this.header)
 
@@ -107,6 +110,7 @@ export class GameRun extends Container {
                     this.score += this.score_increase
                     this.text_score.text = this.score + '/100'
                     tmp.destroy_this()
+                    this.add_small_fish()
                 }
 
             }
@@ -166,21 +170,24 @@ export class GameRun extends Container {
         var number = Math.floor(Math.random() * 4)
         var tmp = new SmallFish(data.smallFish[this.quantity_fish].x, data.smallFish[this.quantity_fish].y, data.game_bg.x_bg,
             data.game_bg.y_bg, data.game_bg.width - data.game_bg.x_bg, data.game_bg.height - data.game_bg.y_bg)
+        //this.tmp.set_zIndex(10)
         switch (number) {
             case 0:
                 tmp.x = - tmp.width
                 break
             case 1:
-                tmp.x = - tmp.width
+                tmp.x = tmp.bg_width + tmp.width
                 break
             case 2:
-                tmp.x = - tmp.width
+                tmp.y = tmp.y_bg - tmp.height
                 break
             case 3:
-                tmp.x = - tmp.width
+                tmp.y = tmp.bg_height + tmp.height + tmp.y_bg
                 break
         }
+        this.listSmallFish.push(tmp)
 
+        this.addChild(tmp)
         this.quantity_fish += 1
 
     }

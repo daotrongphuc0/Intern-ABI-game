@@ -26,6 +26,7 @@ export class SmallFish extends Container {
         this.fish.x = this.fish.width / 2
         this.fish.y = this.fish.height / 2
         this.addChild(this.fish)
+        this.zIndex = 10
 
 
         this.container = new Graphics()
@@ -52,6 +53,10 @@ export class SmallFish extends Container {
 
 
     }
+
+    // set_zIndex(int) {
+    //     this.zIndex = int
+    // }
 
     update(deltaTime) {
 
