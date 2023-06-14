@@ -6,7 +6,8 @@
         "height": 720,
         "backgroundImage": "../assets/images/bg.png",
         "score_increase": 10,
-        "limit_small_fish": 4
+        "limit_small_fish": 4,
+        "name_lv": "level 1"
     },
     "mainFish": {
         "x": 200,

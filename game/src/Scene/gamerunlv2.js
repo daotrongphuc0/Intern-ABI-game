@@ -2,16 +2,15 @@ import { Container, Ticker, Graphics, Text, TextStyle } from "pixi.js";
 import { Fish } from "../model/mainFish";
 import { SmallFish } from "../model/SmallFish";
 import { BigFish } from "../model/BigFish"
-import data from "../../assets/jsondata/dataLv1.json"
+import data from "../../assets/jsondata/dataLv2.json"
 import { Bg } from "../model/bg";
 import { Game } from "../game";
 import dataGame from "../../assets/jsondata/dataGame.json"
 import { GameOver } from "./gameOver";
 import { BeginLevel } from "./Scene_begin_level";
-import { GameRunLv2 } from "./gamerunlv2";
 
 
-export class GameRun extends Container {
+export class GameRunLv2 extends Container {
     constructor() {
         super()
         this.x = 0
@@ -22,16 +21,15 @@ export class GameRun extends Container {
         this.width = dataGame.game.width
         this.height = dataGame.game.height
         this.sortableChildren = true
-
         this.quantity_fish = data.game_bg.limit_small_fish
-        console.log('game run')
-        console.log(this.getBounds())
+        console.log('game run lv2')
 
-        this.bg = new Bg(0, 50)
+
+        this.bg = new Bg(0, 50, data.game_bg.backgroundImage)
         this.bg.zIndex = 0
         this.addChild(this.bg);
 
-        this.begin_game = new BeginLevel('level 1')
+        this.begin_game = new BeginLevel('level 2')
 
         this.bg.addChild(this.begin_game)
         setTimeout(() => {
@@ -39,8 +37,6 @@ export class GameRun extends Container {
             this.begin_game.destroy()
             this.init_game()
         }, 3000)
-
-
 
     }
 
@@ -53,19 +49,26 @@ export class GameRun extends Container {
         for (var i = 0; i < this.quantity_fish; i++) {
             var tmp = new SmallFish(data.smallFish[i].x, data.smallFish[i].y, data.game_bg.x_bg, data.game_bg.y_bg,
                 data.game_bg.width - data.game_bg.x_bg, data.game_bg.height - data.game_bg.y_bg)
+            tmp.default_timeLoopDangerous = 4000
+            tmp.speed_dangerou = 3
+            tmp.default_speed = 1.5
             this.listSmallFish.push(tmp)
             this.addChild(tmp)
         }
-        //console.log(data.smallFish.length)
 
+        console.log(data.bigFish.length)
         this.listBigFish = []
         for (var i = 0; i < data.bigFish.length; i++) {
             var tmp = new BigFish(data.bigFish[i].x, data.bigFish[i].y, data.game_bg.x_bg, data.game_bg.y_bg,
                 data.game_bg.width - data.game_bg.x_bg, data.game_bg.height - data.game_bg.y_bg)
+            // tmp.speed_angry = 3
+            // tmp.default_speed = data.bigFish[i].speed
+            // tmp.default_timeLoopAngry = 4000
+            tmp.default_timeLoopRandom = data.bigFish[i].time_random
+            tmp.zIndex += i
             this.listBigFish.push(tmp)
             this.addChild(tmp)
         }
-
 
 
         this.header = new Container()
@@ -84,6 +87,7 @@ export class GameRun extends Container {
             fontVariant: "small-caps",
             fontWeight: 500
         });
+
         this.text_score_name = new Text('score:', style);
         this.header.addChild(this.text_score_name)
 
@@ -108,6 +112,7 @@ export class GameRun extends Container {
 
 
         Ticker.shared.add(this.update, this)
+
     }
 
     update(deltaTime) {
@@ -127,9 +132,6 @@ export class GameRun extends Container {
                     this.text_score.text = this.score + '/100'
                     tmp.destroy_this()
                     this.add_small_fish()
-                    if (this.score >= 100) {
-                        Game.chanceScene(new GameRunLv2())
-                    }
                 }
 
             }
@@ -139,7 +141,8 @@ export class GameRun extends Container {
             //if (this.listBigFish[i].isActive) {
             this.listBigFish[i].checkLocation(this.fish)
             if (this.checkCollision(this.fish.container, this.listBigFish[i].container)) {
-                Game.chanceScene(new GameOver());
+                console.log('gameover')
+                Game.chanceScene(new GameOver(data.game_bg.backgroundImage));
                 // this.listBigFish[i].isActive = false
                 // this.listBigFish = []
                 // this.destroy_this()

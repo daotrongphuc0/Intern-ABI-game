@@ -13,11 +13,23 @@ export class SmallFish extends Container {
         this.bg_width = bg_width
         this.bg_height = bg_height
 
-        this.speed = 1
+        //const
+        this.zIndex = 10
+        this.run_distance = 300
+        this.default_timeLoopDangerous = 5000
+        this.run_time = 1000
+        this.default_timeLoopRandom = 3000
+        this.speed_dangerous = 3
+        this.default_speed = 1
 
-        this.timeLoop = 3000
+        // var
+        this.speed = this.default_speed
         this.dangerous = 0
         this.time_dangerous = 0
+        this.timeLoopRamdom = this.default_timeLoopRandom
+
+
+
 
         const smallFishBundle = manifest.bundles.find(bundle => bundle.name === 'smallFish'); // Tìm bundle 'bigFish'
         const texture = Texture.from(smallFishBundle.assets['smallFish01']); // Lấy đường dẫn của texture 'bigFish01' từ assets
@@ -26,7 +38,6 @@ export class SmallFish extends Container {
         this.fish.x = this.fish.width / 2
         this.fish.y = this.fish.height / 2
         this.addChild(this.fish)
-        this.zIndex = 10
 
 
         this.container = new Graphics()
@@ -35,7 +46,7 @@ export class SmallFish extends Container {
         this.container.beginFill('0xFFFFFF')
         this.container.drawRect(-this.fish.width / 2 * 0.6, -this.fish.height / 2 * 0.65, this.fish.width * 0.6, this.fish.height * 0.5)
         this.container.endFill()
-        this.container.alpha = 0.5
+        this.container.alpha = 0
         this.fish.addChild(this.container)
 
         this.goLeft = false;
@@ -83,19 +94,19 @@ export class SmallFish extends Container {
         }
 
         if (this.dangerous) {
-            if (this.time_dangerous < 4000) {
-                this.speed = 1
+            if (this.time_dangerous < this.default_timeLoopDangerous - this.run_time) {
+                this.speed = this.default_speed
                 if (this.time_dangerous < 0) {
                     this.dangerous = false
                 }
             }
 
         } else {
-            if (this.timeLoop <= 0) {
+            if (this.timeLoopRandom <= 0) {
                 this.randomDirection()
-                this.timeLoop = 3000;
+                this.timeLoopRandom = this.default_timeLoopRandom;
             } else {
-                this.timeLoop -= Ticker.shared.deltaMS
+                this.timeLoopRandom -= Ticker.shared.deltaMS
             }
         }
 
@@ -147,10 +158,10 @@ export class SmallFish extends Container {
         var kc = Math.sqrt(Math.pow(obj.x - this.x, 2)
             + Math.pow(obj.y - this.y, 2))
         //console.log(kc)
-        if (kc < 200 && this.time_dangerous < 0) {
+        if (kc < this.run_distance && this.time_dangerous < 0) {
             this.dangerous = true
-            this.time_dangerous = 5000
-            this.speed = 3
+            this.time_dangerous = this.default_timeLoopDangerous
+            this.speed = this.speed_dangerous
             if (obj.x > this.x) {
                 this.goLeft = true
                 this.goRight = false

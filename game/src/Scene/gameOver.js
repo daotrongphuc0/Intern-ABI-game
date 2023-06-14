@@ -4,18 +4,19 @@ import { Bg } from "../model/bg"
 import { GameRun } from "./gamerun";
 import { manifest } from "../gameload/assets";
 import { Game } from "../game";
+import { GameMenu } from "./gameMenu";
 
 
 
 export class GameOver extends Container {
-    constructor() {
+    constructor(name_img = 'bgGame') {
         super()
 
 
         this.x = 0
         this.y = 0
 
-        this.bg = new Bg()
+        this.bg = new Bg(0, 0, name_img)
         this.addChild(this.bg);
 
         var myBlurFilter = new BlurFilter();
@@ -73,7 +74,7 @@ export class GameOver extends Container {
         this.containerNo.interactive = true;
         this.containerNo.on('pointerover', this.onPointerOver.bind(this.backgroundNo));
         this.containerNo.on('pointerout', this.onPointerOut.bind(this.backgroundNo));
-        this.containerYes.on('click', this.onclickNo.bind(this))
+        this.containerNo.on('click', this.onclickNo.bind(this))
     }
 
 
@@ -89,11 +90,11 @@ export class GameOver extends Container {
 
     onClickYes() {
         Game.chanceScene(new GameRun())
-        this.destroy()
+        //this.destroy()
     }
 
     onclickNo() {
-
+        Game.chanceScene(new GameMenu())
     }
 
     destroy_this() {

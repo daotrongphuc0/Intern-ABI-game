@@ -7,6 +7,7 @@ export class Fish extends Container {
         this.y_bg = y_bg
         this.bg_width = bg_width
         this.bg_height = bg_height
+        this.zIndex = 30
 
         this.x = x
         this.y = y
@@ -35,7 +36,7 @@ export class Fish extends Container {
         this.container.beginFill('0xFFFFFF')
         this.container.drawRect(-this.animated.width / 2 * 0.6, -this.animated.height / 2 * 0.6, this.animated.width * 0.8, this.animated.height * 0.6)
         this.container.endFill()
-        this.container.alpha = 0.5
+        this.container.alpha = 0
         this.animated.addChild(this.container)
 
 

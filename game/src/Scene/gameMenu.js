@@ -2,8 +2,10 @@ import { Container, Sprite, TextStyle, Rectangle, Text, Texture } from "pixi.js"
 import dataGame from "../../assets/jsondata/dataGame.json"
 import { Game } from "../game";
 import { GameRun } from "./gamerun";
+import { GameRunLv2 } from "./gamerunlv2";
 
 import { manifest } from "../gameload/assets";
+import { GameWin } from "./GameWin";
 
 export class GameMenu extends Container {
     constructor() {
@@ -86,7 +88,7 @@ export class GameMenu extends Container {
     }
 
     onClickStart() {
-        Game.chanceScene(new GameRun())
+        Game.chanceScene(new GameWin())
         //this.destroy()
     }
 

@@ -13,11 +13,21 @@ export class BigFish extends Container {
         this.bg_width = bg_width
         this.bg_height = bg_height
 
-        this.speed = 1
+        //const
+        this.zIndex = 20
+        this.chasing_distance = 300
+        this.default_timeLoopAngry = 5000
+        this.chase_time = 1000
+        this.default_timeLoopRandom = 3000
+        this.speed_angry = 2.5
+        this.default_speed = 1
 
-        this.timeLoop = 3000
+        // var
+        this.speed = this.default_speed
         this.angry = 0
         this.time_angry = 0
+        this.timeLoopRamdom = this.default_timeLoopRandom
+
 
         const bigFishBundle = manifest.bundles.find(bundle => bundle.name === 'bigFish'); // Tìm bundle 'bigFish'
         const texture = Texture.from(bigFishBundle.assets['bigFish01']); // Lấy đường dẫn của texture 'bigFish01' từ assets
@@ -36,7 +46,7 @@ export class BigFish extends Container {
         this.container.drawRect(-this.fish.width / 2 * 0.6, -this.fish.height / 2 * 0.3,
             this.fish.width * 0.75, this.fish.height * 0.4)
         this.container.endFill()
-        this.container.alpha = 0.5
+        this.container.alpha = 0
         this.fish.addChild(this.container)
 
 
@@ -82,19 +92,19 @@ export class BigFish extends Container {
         }
 
         if (this.angry) {
-            if (this.time_angry < 4000) {
-                this.speed = 1
+            if (this.time_angry < this.default_timeLoopAngry - this.chase_time) {
+                this.speed = this.default_speed
                 if (this.time_angry < 0) {
                     this.angry = false
                 }
             }
 
         } else {
-            if (this.timeLoop <= 0) {
+            if (this.timeLoopRamdom <= 0) {
                 this.randomDirection()
-                this.timeLoop = 3000;
+                this.timeLoopRamdom = this.defaut_timeLoopRandom;
             } else {
-                this.timeLoop -= Ticker.shared.deltaMS
+                this.timeLoopRamdom -= Ticker.shared.deltaMS
             }
         }
 
@@ -145,10 +155,10 @@ export class BigFish extends Container {
         var kc = Math.sqrt(Math.pow(obj.x - this.x, 2)
             + Math.pow(obj.y - this.y, 2))
         //console.log(kc)
-        if (kc < 300 && this.time_angry < 0) {
+        if (kc < this.chasing_distance && this.time_angry < 0) {
             this.angry = true
-            this.time_angry = 5000
-            this.speed = 3
+            this.time_angry = this.default_timeLoopAngry
+            this.speed = this.speed_angry
             if (obj.x < this.x) {
                 this.goLeft = true
                 this.goRight = false

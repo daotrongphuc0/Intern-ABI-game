@@ -5,6 +5,8 @@ import dataGame from "../assets/jsondata/dataGame.json";
 import { GameRun } from "./Scene/gamerun";
 import { GameOver } from "./Scene/gameOver";
 import { GameMenu } from "./Scene/gameMenu";
+import { BeginLevel } from "./Scene/Scene_begin_level";
+import { GameRunLv2 } from "./Scene/gamerunlv2";
 //import { Platform } from "./platform";
 
 
