@@ -34,8 +34,18 @@ export const manifest = {
                 'bgGameMenu': '../assets/images/bgmenu.png',
                 'bgGameLv2': '../assets/images/bglv2.jpg',
                 'item_bg_menu': '../assets/images/menustart.png',
+                'item_home': '../assets/images/buttonhome.png',
+                'item_option': '../assets/images/option.png',
             }
 
         },
+        {
+            name: "sound",
+            assets: {
+                'sound_eat': '../assets/sound/eat.wav',
+                'sound_game': '../assets/sound/game.mp3',
+                'sound_home': '../assets/sound/home.mp3'
+            }
+        }
     ]
 };

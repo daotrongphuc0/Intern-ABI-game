@@ -1,6 +1,7 @@
 import { Container, Sprite, Texture, Ticker, Graphics } from "pixi.js";
 import { manifest } from "../gameload/assets";
 import dataGame from "../../assets/jsondata/dataGame.json"
+import { Game } from "../game";
 
 export class SmallFish extends Container {
     constructor(x, y, x_bg, y_bg, bg_width, bg_height) {
@@ -70,48 +71,48 @@ export class SmallFish extends Container {
     // }
 
     update(deltaTime) {
+        if (!Game.isPause) {
+            if (this.goLeft) {
+                this.fish.scale.x = 0.8
+                this.x = this.x - (this.speed * deltaTime);
+                if (this.x + this.fish.width < 0) this.x = this.bg_width
+            }
 
-        if (this.goLeft) {
-            this.fish.scale.x = 0.8
-            this.x = this.x - (this.speed * deltaTime);
-            if (this.x + this.fish.width < 0) this.x = this.bg_width
-        }
+            if (this.goRight) {
+                this.fish.scale.x = -0.8
+                this.x = this.x + (this.speed * deltaTime);
+                if (this.x > this.bg_width) this.x = - this.fish.width
+            }
 
-        if (this.goRight) {
-            this.fish.scale.x = -0.8
-            this.x = this.x + (this.speed * deltaTime);
-            if (this.x > this.bg_width) this.x = - this.fish.width
-        }
+            if (this.goUp) {
+                this.y = this.y - (this.speed * deltaTime);
+                if (this.y < this.y_bg - this.fish.height) this.y = this.bg_height
+            }
 
-        if (this.goUp) {
-            this.y = this.y - (this.speed * deltaTime);
-            if (this.y < this.y_bg - this.fish.height) this.y = this.bg_height
-        }
+            if (this.goDown) {
+                this.y = this.y + (this.speed * deltaTime);
+                if (this.y > this.bg_height) this.y = 0 - this.fish.height + this.y_bg
+            }
 
-        if (this.goDown) {
-            this.y = this.y + (this.speed * deltaTime);
-            if (this.y > this.bg_height) this.y = 0 - this.fish.height + this.y_bg
-        }
+            if (this.dangerous) {
+                if (this.time_dangerous < this.default_timeLoopDangerous - this.run_time) {
+                    this.speed = this.default_speed
+                    if (this.time_dangerous < 0) {
+                        this.dangerous = false
+                    }
+                }
 
-        if (this.dangerous) {
-            if (this.time_dangerous < this.default_timeLoopDangerous - this.run_time) {
-                this.speed = this.default_speed
-                if (this.time_dangerous < 0) {
-                    this.dangerous = false
+            } else {
+                if (this.timeLoopRandom <= 0) {
+                    this.randomDirection()
+                    this.timeLoopRandom = this.default_timeLoopRandom;
+                } else {
+                    this.timeLoopRandom -= Ticker.shared.deltaMS
                 }
             }
 
-        } else {
-            if (this.timeLoopRandom <= 0) {
-                this.randomDirection()
-                this.timeLoopRandom = this.default_timeLoopRandom;
-            } else {
-                this.timeLoopRandom -= Ticker.shared.deltaMS
-            }
+            this.time_dangerous -= Ticker.shared.deltaMS
         }
-
-        this.time_dangerous -= Ticker.shared.deltaMS
-
 
         //console.log(1000 / Ticker.shared.deltaMS);
     }
@@ -181,19 +182,15 @@ export class SmallFish extends Container {
         }
     }
 
-    destroy_this() {
+    destroy() {
         // Hủy đăng ký cập nhật
         Ticker.shared.remove(this.update, this);
 
-        // Xóa đối tượng con
-        this.removeChild(this.fish);
-        this.fish.removeChild(this.container);
-
-        this.container.destroy()
-        this.fish.destroy()
-
-        // Xóa chính class SmallFish khỏi đối tượng cha
-        this.destroy();
+        while (this.children.length > 0) {
+            this.children[0].destroy()
+            this.removeChild(this.children[0]);
+        }
+        super.destroy();
     }
 
 }

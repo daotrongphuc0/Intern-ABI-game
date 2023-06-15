@@ -1,5 +1,6 @@
 import { AnimatedSprite, Assets, Container, Graphics, Texture, Ticker } from "pixi.js";
 import { manifest } from "../gameload/assets";
+import { Game } from "../game";
 export class Fish extends Container {
     constructor(x, y, x_bg, y_bg, bg_width, bg_height) {
         super();
@@ -50,25 +51,25 @@ export class Fish extends Container {
     }
 
     update(deltaTime) {
-        //console.log(this.getBounds())
-        //console.log(this.x)
+        if (!Game.isPause) {
 
-        if (this.goLeft) {
-            this.animated.scale.x = -0.5
-            this.x = Math.max(this.x - (this.speed * deltaTime), - (this.animated.width / 2));
-        }
+            if (this.goLeft) {
+                this.animated.scale.x = -0.5
+                this.x = Math.max(this.x - (this.speed * deltaTime), - (this.animated.width / 2));
+            }
 
-        if (this.goRight) {
-            this.animated.scale.x = 0.5
-            this.x = Math.min(this.x + (this.speed * deltaTime), this.bg_width - this.animated.width * 1.5);
-        }
+            if (this.goRight) {
+                this.animated.scale.x = 0.5
+                this.x = Math.min(this.x + (this.speed * deltaTime), this.bg_width - this.animated.width * 1.5);
+            }
 
-        if (this.goUp) {
-            this.y = Math.max(this.y - (this.speed * deltaTime), this.y_bg - this.animated.height / 2);
-        }
+            if (this.goUp) {
+                this.y = Math.max(this.y - (this.speed * deltaTime), this.y_bg - this.animated.height / 2);
+            }
 
-        if (this.goDown) {
-            this.y = Math.min(this.y + (this.speed * deltaTime), this.bg_height - this.animated.height / 2 - this.y_bg / 2);
+            if (this.goDown) {
+                this.y = Math.min(this.y + (this.speed * deltaTime), this.bg_height - this.animated.height / 2 - this.y_bg / 2);
+            }
         }
     }
 
@@ -110,23 +111,14 @@ export class Fish extends Container {
         }
     }
 
-    destroy_this() {
-        super.destroy()
-        // Hủy đăng ký cập nhật
+    destroy() {
+
         Ticker.shared.remove(this.update, this);
-
-        // Xóa đối tượng con
-        this.removeChild(this.animated);
-        this.animated.removeChild(this.container);
-
-
-
-        // Xóa đối tượng container
-        this.container.destroy()
-        this.animated.destroy()
-
-        // Xóa chính class Fish khỏi đối tượng cha
-        this.destroy();
+        while (this.children.length > 0) {
+            this.children[0].destroy()
+            this.removeChild(this.children[0]);
+        }
+        super.destroy();
     }
 
 }

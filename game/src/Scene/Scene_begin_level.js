@@ -10,6 +10,8 @@ export class BeginLevel extends Graphics {
         this.x = 0
         this.y = 0
 
+        this.sortableChildren = true
+
 
         var startTextStyle = new TextStyle({
             fontFamily: 'Arial',
@@ -32,6 +34,7 @@ export class BeginLevel extends Graphics {
         // Đặt vị trí của chữ "Start"
         this.startText.x = data.game.width / 2 - this.startText.width / 2;
         this.startText.y = data.game.height / 2 - this.startText.height;
+        this.startText.zIndex = 5
         this.addChild(this.startText)
 
         // Tạo một đối tượng TextStyle cho chữ "Level 1"
@@ -58,11 +61,16 @@ export class BeginLevel extends Graphics {
         // Đặt vị trí của chữ "Level"
         this.levelText.x = data.game.width / 2 - this.levelText.width / 2;
         this.levelText.y = data.game.height / 2 - this.levelText.height + 60;
+        this.levelText.zIndex = 6
         this.addChild(this.levelText)
 
-        this.beginFill('0xFFFFFF')
-        this.drawRect(0, data.game.height / 2 - 170, data.game.width, this.startText.height + this.levelText.height + 50)
-        this.endFill()
+        this.graphics = new Graphics()
+        this.graphics.beginFill('0xFFFFFF')
+        this.graphics.drawRect(0, data.game.height / 2 - 170, data.game.width, this.startText.height + this.levelText.height + 50)
+        this.graphics.alpha = 0.5
+        this.graphics.zIndex = 1
+        this.graphics.endFill()
+        this.addChild(this.graphics)
         this.run()
     }
 
@@ -94,7 +102,11 @@ export class BeginLevel extends Graphics {
     }
 
     destroy() {
-        super.destroy()
+        while (this.children.length > 0) {
+            this.children[0].destroy()
+            this.removeChild(this.children[0]);
+        }
+        super.destroy();
     }
 
 }

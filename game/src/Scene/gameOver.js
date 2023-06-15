@@ -97,17 +97,12 @@ export class GameOver extends Container {
         Game.chanceScene(new GameMenu())
     }
 
-    destroy_this() {
-        this.containerYes.interactive = false
-        this.containerNo.interactive = false
-        this.bg.destroy()
-        this.menu.destroy()
-        this.containerYes.destroy()
-        this.yes.destroy()
-        this.backgroundYes.destroy()
-        this.no.destroy()
-        this.backgroundNo.destroy()
-        this.containerNo.destroy()
+    destroy() {
+        while (this.children.length > 0) {
+            this.children[0].destroy()
+            this.removeChild(this.children[0]);
+        }
+        super.destroy();
     }
 
 

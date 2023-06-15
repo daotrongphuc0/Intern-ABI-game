@@ -19,4 +19,12 @@ export class Bg extends Container {
         this.addChild(this.sprite)
     }
 
+    destroy() {
+        while (this.children.length > 0) {
+            this.children[0].destroy()
+            this.removeChild(this.children[0]);
+        }
+        super.destroy();
+    }
+
 }

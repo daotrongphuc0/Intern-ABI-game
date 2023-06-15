@@ -8,19 +8,24 @@ import { Game } from "../game";
 import dataGame from "../../assets/jsondata/dataGame.json"
 import { GameOver } from "./gameOver";
 import { BeginLevel } from "./Scene_begin_level";
+import { GameWin } from "./GameWin";
+import { SoundManager } from "../helper/Sound";
+import { Pause } from "../model/pause";
 
 
 export class GameRunLv2 extends Container {
-    constructor() {
+    constructor(nextLevel = true) {
+        SoundManager.play_game()
         super()
         this.x = 0
         this.y = 0
-        this.score = 0
+        this.score = 95
         this.score_increase = data.game_bg.score_increase
         this.time = 0
         this.width = dataGame.game.width
         this.height = dataGame.game.height
         this.sortableChildren = true
+        this.nextLevel = nextLevel
         this.quantity_fish = data.game_bg.limit_small_fish
         console.log('game run lv2')
 
@@ -61,9 +66,7 @@ export class GameRunLv2 extends Container {
         for (var i = 0; i < data.bigFish.length; i++) {
             var tmp = new BigFish(data.bigFish[i].x, data.bigFish[i].y, data.game_bg.x_bg, data.game_bg.y_bg,
                 data.game_bg.width - data.game_bg.x_bg, data.game_bg.height - data.game_bg.y_bg)
-            // tmp.speed_angry = 3
-            // tmp.default_speed = data.bigFish[i].speed
-            // tmp.default_timeLoopAngry = 4000
+
             tmp.default_timeLoopRandom = data.bigFish[i].time_random
             tmp.zIndex += i
             this.listBigFish.push(tmp)
@@ -110,51 +113,74 @@ export class GameRunLv2 extends Container {
         this.addChild(this.header)
 
 
+        this.pause = new Pause()
+        window.addEventListener('keydown', this.keypause.bind(this))
 
         Ticker.shared.add(this.update, this)
 
     }
 
+    keypause(event) {
+
+        if (event.keyCode == 32) {
+            console.log('pause')
+            Game.isPause = !Game.isPause
+            if (Game.isPause) {
+                this.addChild(this.pause)
+            } else {
+                this.removeChild(this.pause)
+            }
+
+        }
+    }
+
     update(deltaTime) {
-        for (var i = 0; i < this.listSmallFish.length; i++) {
-            if (this.listSmallFish[i].isActive) {
-                this.listSmallFish[i].checkLocation(this.fish)
+        if (!Game.isPause) {
+            for (var i = 0; i < this.listSmallFish.length; i++) {
+                if (this.listSmallFish[i].isActive) {
+                    this.listSmallFish[i].checkLocation(this.fish)
 
-                if (this.checkCollision(this.fish.container, this.listSmallFish[i].container)) {
-                    var tmp = this.listSmallFish[i]
-                    this.listSmallFish[i].isActive = false
-                    this.listSmallFish.splice(i, 1)
-                    this.removeChild(tmp)
+                    if (this.checkCollision(this.fish.container, this.listSmallFish[i].container)) {
+                        var tmp = this.listSmallFish[i]
+                        this.listSmallFish[i].isActive = false
+                        this.listSmallFish.splice(i, 1)
+                        this.removeChild(tmp)
 
 
-                    console.log("destroy fish")
-                    this.score += this.score_increase
-                    this.text_score.text = this.score + '/100'
-                    tmp.destroy_this()
-                    this.add_small_fish()
+                        console.log("destroy fish")
+                        this.score += this.score_increase
+                        this.text_score.text = this.score + '/100'
+                        tmp.destroy()
+                        this.add_small_fish()
+
+                        if (this.score >= 100) {
+                            Game.time += this.time
+                            SoundManager.stop_game()
+                            if (this.nextLevel) {
+                                Game.chanceScene(new GameWin(data.game_bg.backgroundImage))
+                            } else {
+                                Game.chanceScene(new GameWin(data.game_bg.backgroundImage))
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            for (var i = 0; i < this.listBigFish.length; i++) {
+                //if (this.listBigFish[i].isActive) {
+                this.listBigFish[i].checkLocation(this.fish)
+                if (this.checkCollision(this.fish.container, this.listBigFish[i].container)) {
+                    console.log('gameover')
+                    SoundManager.stop_game()
+                    Game.chanceScene(new GameOver(data.game_bg.backgroundImage));
                 }
 
             }
+
+            this.time += Ticker.shared.deltaMS
+            this.update_time()
         }
-
-        for (var i = 0; i < this.listBigFish.length; i++) {
-            //if (this.listBigFish[i].isActive) {
-            this.listBigFish[i].checkLocation(this.fish)
-            if (this.checkCollision(this.fish.container, this.listBigFish[i].container)) {
-                console.log('gameover')
-                Game.chanceScene(new GameOver(data.game_bg.backgroundImage));
-                // this.listBigFish[i].isActive = false
-                // this.listBigFish = []
-                // this.destroy_this()
-
-            }
-            // }
-
-        }
-
-        this.time += Ticker.shared.deltaMS
-        this.update_time()
-
     }
 
     update_time() {
@@ -214,45 +240,21 @@ export class GameRunLv2 extends Container {
 
     }
 
-    destroy_this() {
-        // Xóa các đối tượng con
-        this.removeChild(this.bg);
-        this.removeChild(this.fish);
-        this.fish.destroy_this()
-        this.listSmallFish.forEach((fish) => {
-            this.removeChild(fish);
-            fish.destroy_this()
-        });
-        this.listBigFish.forEach((fish) => {
-            this.removeChild(fish);
-            fish.destroy_this()
-        });
+    destroy() {
+
 
         // Xóa các đối tượng con khỏi mảng
         this.listSmallFish = [];
         this.listBigFish = [];
 
-        // Xóa các đối tượng con khỏi header
-        this.header.removeChild(this.score_bg);
-        this.header.removeChild(this.text_score_name);
-        this.header.removeChild(this.text_score);
-        this.header.removeChild(this.text_time_name);
-        this.header.removeChild(this.text_time);
-        this.score_bg.destroy()
-        this.text_score_name.destroy()
-        this.text_score.destroy()
-        this.text_time_name.destroy()
-        this.text_time.destroy
-
-        // Xóa header
-        this.removeChild(this.header);
-        this.header.destroy()
+        while (this.children.length > 0) {
+            this.children[0].destroy()
+            this.removeChild(this.children[0]);
+        }
+        super.destroy();
 
         // Ngừng cập nhật
         Ticker.shared.remove(this.update, this);
-
-        // Xóa chính class GameRun
-        this.destroy();
     }
 
 }

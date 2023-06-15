@@ -4,14 +4,18 @@ import { Game } from "../game";
 import { GameRun } from "./gamerun";
 import { GameRunLv2 } from "./gamerunlv2";
 
+
 import { manifest } from "../gameload/assets";
 import { GameWin } from "./GameWin";
+import { GameOption } from "./gameOption";
+import { SoundManager } from "../helper/Sound";
 
 export class GameMenu extends Container {
     constructor() {
         super()
         this.x = 0
         this.y = 0
+
 
         const bgGameMenu = manifest.bundles.find(bundle => bundle.name === 'background');
         const texture = Texture.from(bgGameMenu.assets['bgGameMenu']);
@@ -75,11 +79,13 @@ export class GameMenu extends Container {
         this.option_sprite.on('click', this.onclickOption.bind(this.option_sprite))
 
         this.addChild(this.container_button)
+
+        SoundManager.play_home()
     }
 
     onPointerOver() {
         //this.tint = 0x00FF00;
-        this.scale.set(0.12)
+        this.scale.set(0.108)
     }
 
     onPointerOut() {
@@ -88,24 +94,22 @@ export class GameMenu extends Container {
     }
 
     onClickStart() {
-        Game.chanceScene(new GameWin())
+        Game.resetTime()
+        SoundManager.stop_home()
+        Game.chanceScene(new GameRun())
         //this.destroy()
     }
 
     onclickOption() {
-
+        Game.chanceScene(new GameOption())
     }
 
-    destroy_this() {
-        super.destroy()
-        this.start_sprite.interactive = false
-        this.option_sprite.interactive = false
-        this.bg.destroy()
-        this.name_game.destroy()
-        this.container_button.destroy()
-        this.start_sprite.destroy()
-        this.option_sprite.destroy()
-        this.destroy()
+    destroy() {
+        while (this.children.length > 0) {
+            this.children[0].destroy()
+            this.removeChild(this.children[0]);
+        }
+        super.destroy();
     }
 
 }

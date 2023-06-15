@@ -11,6 +11,8 @@ import { GameRunLv2 } from "./Scene/gamerunlv2";
 
 
 export class Game {
+    static isPause = false
+    static time = 0
     static init() {
         this.app = new Application({
             width: dataGame.game.width,
@@ -35,13 +37,10 @@ export class Game {
 
     static chanceScene(scene) {
         if (this.current_scene) {
-            this.current_scene.destroy_this();
+            this.current_scene.destroy();
             this.mainContainer.removeChild(this.current_scene);
         }
 
-        // let tmp = this.current_scene
-        // this.mainContainer.removeChild(tmp)
-        // tmp.destroy_this()
         this.mainContainer.addChild(scene);
         this.current_scene = scene;
     }
@@ -50,6 +49,10 @@ export class Game {
         this.current_scene = new GameMenu()
         this.mainContainer.addChild(this.current_scene)
         this.app.stage.addChild(this.mainContainer)
+    }
+
+    static resetTime() {
+        this.time = 0
     }
 
 }
