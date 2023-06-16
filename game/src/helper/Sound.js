@@ -1,5 +1,4 @@
 import { sound } from '@pixi/sound';
-import { Resource } from 'pixi.js';
 
 export class SoundManager {
 

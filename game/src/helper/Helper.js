@@ -1,6 +1,4 @@
 
-
-
 export class Helper {
     static randomInRange(min, max) {
         return Math.random() * (max - min) + min;
