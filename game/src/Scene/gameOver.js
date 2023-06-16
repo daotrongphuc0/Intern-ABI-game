@@ -7,22 +7,16 @@ import { Game } from "../game";
 import { GameMenu } from "./gameMenu";
 
 
-
 export class GameOver extends Container {
     constructor(name_img = 'bgGame') {
         super()
-
-
         this.x = 0
         this.y = 0
 
         this.bg = new Bg(0, 0, name_img)
         this.addChild(this.bg);
-
         var myBlurFilter = new BlurFilter();
         myBlurFilter.blur = 10
-
-        // Add it to the `.filters` array of any DisplayObject
         this.bg.filters = [myBlurFilter];
 
         const bgGameOver = manifest.bundles.find(bundle => bundle.name === 'background');
@@ -49,6 +43,7 @@ export class GameOver extends Container {
         this.containerYes.addChild(this.backgroundYes)
         this.containerYes.addChild(this.yes)
         this.addChild(this.containerYes)
+
         this.containerYes.interactive = true;
         this.containerYes.on('pointerover', this.onPointerOver.bind(this.backgroundYes));
         this.containerYes.on('pointerout', this.onPointerOut.bind(this.backgroundYes));
@@ -79,21 +74,20 @@ export class GameOver extends Container {
 
 
     onPointerOver() {
-        //this.tint = 0x00FF00;
         this.alpha = 1
     }
 
     onPointerOut() {
-        // this.tint = 0xFFFFFF;
         this.alpha = 0
     }
 
     onClickYes() {
+        Game.time = 0
         Game.chanceScene(new GameRun())
-        //this.destroy()
     }
 
     onclickNo() {
+        Game.time = 0
         Game.chanceScene(new GameMenu())
     }
 

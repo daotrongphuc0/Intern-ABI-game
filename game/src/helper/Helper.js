@@ -6,12 +6,15 @@ export class Helper {
         return Math.random() * (max - min) + min;
     }
 
-    static getScreenWidth() {
-        const val = window.innerWidth
-        return val
+    static randomFloor(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
     }
+
+    static getScreenWidth() {
+        return window.innerWidth
+    }
+
     static getScreenHeight() {
-        const val = window.innerHeight
-        return val
+        return window.innerHeight
     }
 }

@@ -7,59 +7,56 @@ import { Bg } from "../model/bg";
 import { Game } from "../game";
 import dataGame from "../../assets/jsondata/dataGame.json"
 import { GameOver } from "./gameOver";
-import { BeginLevel } from "./Scene_begin_level";
+import { BeginLevel } from "../model/Begin_level";
 import { GameRunLv2 } from "./gamerunlv2";
-import { ParticleEffect } from "../model/Particle";
 import { GameWin } from "./GameWin";
 import { SoundManager } from "../helper/Sound";
 import { Pause } from "../model/pause";
+import { Collision } from "../helper/Collision";
+import { Helper } from "../helper/Helper";
 
 
 export class GameRun extends Container {
     constructor(nextLevel = true) {
+        //super
         SoundManager.play_game()
         super()
         this.x = 0
         this.y = 0
-        this.score = 80
+        this.score = 0
         this.score_increase = data.game_bg.score_increase
         this.time = 0
         this.width = dataGame.game.width
         this.height = dataGame.game.height
         this.sortableChildren = true
         this.nextLevel = nextLevel
-
         this.quantity_fish = data.game_bg.limit_small_fish
-        console.log('game run')
-        console.log(this.getBounds())
 
+        // background
         this.bg = new Bg(0, 50)
         this.bg.zIndex = 0
         this.addChild(this.bg);
 
+        // scen begin level
         this.begin_game = new BeginLevel('level 1')
-
         this.bg.addChild(this.begin_game)
 
-
-
+        // đợi hiển thị 
         setTimeout(() => {
             this.bg.removeChild(this > this.begin_game)
             this.begin_game.destroy()
             this.init_game()
         }, 3000)
-
-
-
     }
 
-
-
+    // tiếp tục contructor
     init_game() {
+        // add player
         this.fish = new Fish(data.mainFish.x, data.mainFish.y, data.game_bg.x_bg, data.game_bg.y_bg,
             data.game_bg.width - data.game_bg.x_bg, data.game_bg.height - data.game_bg.y_bg)
         this.addChild(this.fish)
 
+        // add list small fish
         this.listSmallFish = []
         for (var i = 0; i < this.quantity_fish; i++) {
             var tmp = new SmallFish(data.smallFish[i].x, data.smallFish[i].y, data.game_bg.x_bg, data.game_bg.y_bg,
@@ -67,8 +64,8 @@ export class GameRun extends Container {
             this.listSmallFish.push(tmp)
             this.addChild(tmp)
         }
-        //console.log(data.smallFish.length)
 
+        // add list big fish
         this.listBigFish = []
         for (var i = 0; i < data.bigFish.length; i++) {
             var tmp = new BigFish(data.bigFish[i].x, data.bigFish[i].y, data.game_bg.x_bg, data.game_bg.y_bg,
@@ -77,18 +74,17 @@ export class GameRun extends Container {
             this.addChild(tmp)
         }
 
-
-
+        // thanh điểm và thời gian
         this.header = new Container()
         this.header.x = 0
         this.header.y = 0
-
         this.score_bg = new Graphics()
         this.score_bg.beginFill('0xFFFFFF')
         this.score_bg.drawRect(0, 0, data.game_bg.width, 50)
         this.score_bg.endFill()
         this.header.addChild(this.score_bg)
 
+        // score
         const style = new TextStyle({
             fontFamily: "Comic Sans MS",
             fontSize: 42,
@@ -97,25 +93,22 @@ export class GameRun extends Container {
         });
         this.text_score_name = new Text('score:', style);
         this.header.addChild(this.text_score_name)
-
         this.text_score = new Text(this.score + '/100', style);
         this.text_score.anchor.set(1, 0)
         this.text_score.x = 275
         this.header.addChild(this.text_score)
 
+        //time
         this.text_time_name = new Text('Time:', style);
         this.text_time_name.x = 900
         this.header.addChild(this.text_time_name)
-
-
-
         this.text_time = new Text('00:00', style);
         this.text_time.x = 1020
         this.header.addChild(this.text_time)
         this.header.zIndex = 100
-
         this.addChild(this.header)
 
+        // game pause
         this.pause = new Pause()
         window.addEventListener('keydown', this.keypause.bind(this))
 
@@ -123,7 +116,6 @@ export class GameRun extends Container {
     }
 
     keypause(event) {
-
         if (event.keyCode == 32) {
             console.log('pause')
             Game.isPause = !Game.isPause
@@ -132,7 +124,6 @@ export class GameRun extends Container {
             } else {
                 this.removeChild(this.pause)
             }
-
         }
     }
 
@@ -142,13 +133,12 @@ export class GameRun extends Container {
                 if (this.listSmallFish[i].isActive) {
                     this.listSmallFish[i].checkLocation(this.fish)
 
-                    if (this.checkCollision(this.fish.container, this.listSmallFish[i].container)) {
+                    if (Collision.checkCollision(this.fish.container, this.listSmallFish[i].container)) {
                         SoundManager.play_eat()
                         var tmp = this.listSmallFish[i]
                         this.listSmallFish[i].isActive = false
                         this.listSmallFish.splice(i, 1)
                         this.removeChild(tmp)
-
 
                         console.log("destroy fish")
                         this.score += this.score_increase
@@ -156,7 +146,6 @@ export class GameRun extends Container {
                         tmp.destroy()
                         this.add_small_fish()
                         if (this.score >= 100) {
-                            Game.time += this.time
                             if (this.nextLevel) {
                                 Game.chanceScene(new GameRunLv2())
                             } else {
@@ -170,18 +159,16 @@ export class GameRun extends Container {
             }
 
             for (var i = 0; i < this.listBigFish.length; i++) {
-                //if (this.listBigFish[i].isActive) {
                 this.listBigFish[i].checkLocation(this.fish)
-                if (this.checkCollision(this.fish.container, this.listBigFish[i].container)) {
+                if (Collision.checkCollision(this.fish.container, this.listBigFish[i].container)) {
                     SoundManager.stop_game()
                     Game.chanceScene(new GameOver());
                 }
-                // }
-
             }
 
-            this.time += Ticker.shared.deltaMS
-            this.update_time()
+            // update time game
+            Game.time += Ticker.shared.deltaMS
+            this.text_time.text = Game.get_time()
         }
         else {
             return
@@ -189,39 +176,9 @@ export class GameRun extends Container {
 
     }
 
-    update_time() {
-        // Lấy giá trị phút và giây
-        let minutes = Math.floor(this.time / 60000);
-        let seconds = Math.floor((this.time % 60000) / 1000);
-
-        // Định dạng lại giá trị phút và giây thành hai chữ số
-        let formattedMinutes = ("0" + minutes).slice(-2);
-        let formattedSeconds = ("0" + seconds).slice(-2);
-
-        // Tạo đối tượng Text với giá trị đã định dạng
-        this.text_time.text = formattedMinutes + ':' + formattedSeconds
-    }
-
-    checkCollision(objA, objB) {
-        var a = objA.getBounds();
-        var b = objB.getBounds();
-
-        var rightmostLeft = a.left < b.left ? b.left : a.left;
-        var leftmostRight = a.right > b.right ? b.right : a.right;
-
-        if (leftmostRight <= rightmostLeft) {
-            return false;
-        }
-
-        var bottommostTop = a.top < b.top ? b.top : a.top;
-        var topmostBottom = a.bottom > b.bottom ? b.bottom : a.bottom;
-
-        return topmostBottom > bottommostTop;
-    }
-
     add_small_fish() {
         if (this.quantity_fish >= data.smallFish.length) return
-        var number = Math.floor(Math.random() * 4)
+        var number = Helper.randomFloor(0, 4)
         var tmp = new SmallFish(data.smallFish[this.quantity_fish].x, data.smallFish[this.quantity_fish].y, data.game_bg.x_bg,
             data.game_bg.y_bg, data.game_bg.width - data.game_bg.x_bg, data.game_bg.height - data.game_bg.y_bg)
         //this.tmp.set_zIndex(10)
@@ -253,11 +210,8 @@ export class GameRun extends Container {
             this.children[0].destroy()
             this.removeChild(this.children[0]);
         }
-        super.destroy();
 
-        // Ngừng cập nhật
         Ticker.shared.remove(this.update, this);
-
+        super.destroy();
     }
-
 }

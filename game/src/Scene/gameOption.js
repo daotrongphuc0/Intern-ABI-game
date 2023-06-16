@@ -5,7 +5,6 @@ import { GameRun } from "./gamerun";
 import { GameRunLv2 } from "./gamerunlv2";
 import { Bg } from "../model/bg";
 import { manifest } from "../gameload/assets";
-import { GameWin } from "./GameWin";
 import { GameMenu } from "./gameMenu";
 import { SoundManager } from "../helper/Sound";
 
@@ -23,7 +22,7 @@ export class GameOption extends Container {
             fontFamily: 'Arial',
             fontSize: 100,
             fontWeight: 'bold',
-            fill: ['#00bfff', '#0066cc'], // Gradient fill - màu xanh nước biển
+            fill: ['#00bfff', '#0066cc'],
             stroke: '#ffffff',
             strokeThickness: 6,
             dropShadow: true,
@@ -34,10 +33,8 @@ export class GameOption extends Container {
             fontStyle: 'italic', // Nghiêng chữ
         });
 
-        // Tạo một đối tượng Text cho chữ "Start" với TextStyle tương ứng
         this.headText = new Text('Option', headTextStyle);
 
-        // Đặt vị trí của chữ "Start"
         this.headText.x = dataGame.game.width / 2 - this.headText.width / 2;
         this.headText.y = dataGame.game.height / 2 - this.headText.height - 170;
 
@@ -107,8 +104,6 @@ export class GameOption extends Container {
         this.level2.on('pointerout', this.onPointerOut.bind(this.level2));
         this.level2.on('click', this.onClickStartLv2.bind(this.level2))
 
-
-
         this.exit = new Sprite(texture.clone())
         this.exit.texture.frame = new Rectangle(0, this.exit.height / 3, this.exit.width, this.exit.height / 3)
         this.exit.scale.set(0.5)
@@ -124,16 +119,13 @@ export class GameOption extends Container {
         this.exit.on('pointerout', this.onPointerOut.bind(this.exit));
         this.exit.on('click', this.onClickBack.bind(this.exit))
 
-
     }
 
     onPointerOver() {
-        //this.tint = 0x00FF00;
         this.scale.set(0.52)
     }
 
     onPointerOut() {
-        // this.tint = 0xFFFFFF;
         this.scale.set(0.5)
     }
 
@@ -152,8 +144,6 @@ export class GameOption extends Container {
     onClickBack() {
         Game.chanceScene(new GameMenu())
     }
-
-
 
     destroy() {
         while (this.children.length > 0) {

@@ -1,7 +1,7 @@
 import { Container, Sprite, Texture, Ticker, Graphics } from "pixi.js";
 import { manifest } from "../gameload/assets";
-import dataGame from "../../assets/jsondata/dataGame.json"
 import { Game } from "../game";
+import { Helper } from "../helper/Helper";
 
 export class BigFish extends Container {
     constructor(x, y, x_bg, y_bg, bg_width, bg_height) {
@@ -50,16 +50,11 @@ export class BigFish extends Container {
         this.container.alpha = 0
         this.fish.addChild(this.container)
 
-
-
         this.goLeft = true;
         this.goRight = false;
         this.goDown = false;
         this.goUp = false;
         this.currentTime = 0;
-
-
-
 
         this.randomDirection()
 
@@ -114,8 +109,8 @@ export class BigFish extends Container {
     }
 
     randomDirection() {
-        var randomNumberX = Math.floor(Math.random() * 3)
-        var randomNumberY = Math.floor(Math.random() * 3)
+        var randomNumberX = Helper.randomFloor(0, 3)
+        var randomNumberY = Helper.randomFloor(0, 3)
         if (randomNumberY === 0 && randomNumberX == 0) randomNumberX = 1
         switch (randomNumberX) {
             case 0:
@@ -131,7 +126,6 @@ export class BigFish extends Container {
                 this.goLeft = true
                 break
         }
-
 
         switch (randomNumberY) {
             case 0:

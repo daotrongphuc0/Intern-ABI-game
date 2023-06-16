@@ -7,10 +7,12 @@ import { Bg } from "../model/bg";
 import { Game } from "../game";
 import dataGame from "../../assets/jsondata/dataGame.json"
 import { GameOver } from "./gameOver";
-import { BeginLevel } from "./Scene_begin_level";
+import { BeginLevel } from "../model/Begin_level";
 import { GameWin } from "./GameWin";
 import { SoundManager } from "../helper/Sound";
 import { Pause } from "../model/pause";
+import { Collision } from "../helper/Collision";
+import { Helper } from "../helper/Helper";
 
 
 export class GameRunLv2 extends Container {
@@ -19,7 +21,7 @@ export class GameRunLv2 extends Container {
         super()
         this.x = 0
         this.y = 0
-        this.score = 95
+        this.score = 0
         this.score_increase = data.game_bg.score_increase
         this.time = 0
         this.width = dataGame.game.width
@@ -140,7 +142,7 @@ export class GameRunLv2 extends Container {
                 if (this.listSmallFish[i].isActive) {
                     this.listSmallFish[i].checkLocation(this.fish)
 
-                    if (this.checkCollision(this.fish.container, this.listSmallFish[i].container)) {
+                    if (Collision.checkCollision(this.fish.container, this.listSmallFish[i].container)) {
                         var tmp = this.listSmallFish[i]
                         this.listSmallFish[i].isActive = false
                         this.listSmallFish.splice(i, 1)
@@ -154,7 +156,7 @@ export class GameRunLv2 extends Container {
                         this.add_small_fish()
 
                         if (this.score >= 100) {
-                            Game.time += this.time
+                            //Game.time += this.time
                             SoundManager.stop_game()
                             if (this.nextLevel) {
                                 Game.chanceScene(new GameWin(data.game_bg.backgroundImage))
@@ -170,7 +172,7 @@ export class GameRunLv2 extends Container {
             for (var i = 0; i < this.listBigFish.length; i++) {
                 //if (this.listBigFish[i].isActive) {
                 this.listBigFish[i].checkLocation(this.fish)
-                if (this.checkCollision(this.fish.container, this.listBigFish[i].container)) {
+                if (Collision.checkCollision(this.fish.container, this.listBigFish[i].container)) {
                     console.log('gameover')
                     SoundManager.stop_game()
                     Game.chanceScene(new GameOver(data.game_bg.backgroundImage));
@@ -178,44 +180,14 @@ export class GameRunLv2 extends Container {
 
             }
 
-            this.time += Ticker.shared.deltaMS
-            this.update_time()
+            Game.time += Ticker.shared.deltaMS
+            this.text_time.text = Game.get_time()
         }
-    }
-
-    update_time() {
-        // Lấy giá trị phút và giây
-        let minutes = Math.floor(this.time / 60000);
-        let seconds = Math.floor((this.time % 60000) / 1000);
-
-        // Định dạng lại giá trị phút và giây thành hai chữ số
-        let formattedMinutes = ("0" + minutes).slice(-2);
-        let formattedSeconds = ("0" + seconds).slice(-2);
-
-        // Tạo đối tượng Text với giá trị đã định dạng
-        this.text_time.text = formattedMinutes + ':' + formattedSeconds
-    }
-
-    checkCollision(objA, objB) {
-        var a = objA.getBounds();
-        var b = objB.getBounds();
-
-        var rightmostLeft = a.left < b.left ? b.left : a.left;
-        var leftmostRight = a.right > b.right ? b.right : a.right;
-
-        if (leftmostRight <= rightmostLeft) {
-            return false;
-        }
-
-        var bottommostTop = a.top < b.top ? b.top : a.top;
-        var topmostBottom = a.bottom > b.bottom ? b.bottom : a.bottom;
-
-        return topmostBottom > bottommostTop;
     }
 
     add_small_fish() {
         if (this.quantity_fish >= data.smallFish.length) return
-        var number = Math.floor(Math.random() * 4)
+        var number = Helper.randomFloor(0, 4)
         var tmp = new SmallFish(data.smallFish[this.quantity_fish].x, data.smallFish[this.quantity_fish].y, data.game_bg.x_bg,
             data.game_bg.y_bg, data.game_bg.width - data.game_bg.x_bg, data.game_bg.height - data.game_bg.y_bg)
         //this.tmp.set_zIndex(10)
@@ -241,9 +213,8 @@ export class GameRunLv2 extends Container {
     }
 
     destroy() {
+        Ticker.shared.remove(this.update, this);
 
-
-        // Xóa các đối tượng con khỏi mảng
         this.listSmallFish = [];
         this.listBigFish = [];
 
@@ -252,9 +223,6 @@ export class GameRunLv2 extends Container {
             this.removeChild(this.children[0]);
         }
         super.destroy();
-
-        // Ngừng cập nhật
-        Ticker.shared.remove(this.update, this);
     }
 
 }

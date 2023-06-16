@@ -1,9 +1,7 @@
 import { Container, Sprite, Text, TextStyle, Graphics, Texture } from "pixi.js";
 import data from "../../assets/jsondata/dataGame.json"
-
 import { manifest } from "../gameload/assets";
 import { Bg } from "../model/bg"
-
 import { ParticleEffect } from "../model/Particle";
 import { Game } from "../game";
 import { GameMenu } from "./gameMenu";
@@ -64,7 +62,7 @@ export class GameWin extends Container {
         });
 
         // Tạo một đối tượng Text cho chữ "Level 1" với TextStyle tương ứng
-        this.homeText = new Text("Time " + this.get_time(), homeTextStyle);
+        this.homeText = new Text("Time " + Game.get_time(), homeTextStyle);
 
         // Đặt vị trí của chữ "Level"
         this.homeText.x = data.game.width / 2 - this.homeText.width / 2;
@@ -96,23 +94,6 @@ export class GameWin extends Container {
 
         this.particle = new ParticleEffect()
         this.addChild(this.particle)
-    }
-
-    destroy() {
-        super.destroy()
-    }
-
-    get_time() {
-        // Lấy giá trị phút và giây
-        let minutes = Math.floor(Game.time / 60000);
-        let seconds = Math.floor((Game.time % 60000) / 1000);
-
-        // Định dạng lại giá trị phút và giây thành hai chữ số
-        let formattedMinutes = ("0" + minutes).slice(-2);
-        let formattedSeconds = ("0" + seconds).slice(-2);
-
-        // Tạo đối tượng Text với giá trị đã định dạng
-        return formattedMinutes + ':' + formattedSeconds
     }
 
     onPointerOver() {

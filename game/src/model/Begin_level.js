@@ -1,5 +1,4 @@
-import { Container, Graphics, TextStyle, Text } from "pixi.js";
-//import { Tween } from "@tweenjs/tween.js";
+import { Graphics, TextStyle, Text } from "pixi.js";
 import data from "../../assets/jsondata/dataGame.json"
 import TWEEN from "@tweenjs/tween.js";
 

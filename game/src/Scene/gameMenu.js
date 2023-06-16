@@ -2,11 +2,7 @@ import { Container, Sprite, TextStyle, Rectangle, Text, Texture } from "pixi.js"
 import dataGame from "../../assets/jsondata/dataGame.json"
 import { Game } from "../game";
 import { GameRun } from "./gamerun";
-import { GameRunLv2 } from "./gamerunlv2";
-
-
 import { manifest } from "../gameload/assets";
-import { GameWin } from "./GameWin";
 import { GameOption } from "./gameOption";
 import { SoundManager } from "../helper/Sound";
 
@@ -84,12 +80,10 @@ export class GameMenu extends Container {
     }
 
     onPointerOver() {
-        //this.tint = 0x00FF00;
         this.scale.set(0.108)
     }
 
     onPointerOut() {
-        // this.tint = 0xFFFFFF;
         this.scale.set(0.1)
     }
 
@@ -97,7 +91,6 @@ export class GameMenu extends Container {
         Game.resetTime()
         SoundManager.stop_home()
         Game.chanceScene(new GameRun())
-        //this.destroy()
     }
 
     onclickOption() {
